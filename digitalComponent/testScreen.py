@@ -1,5 +1,6 @@
 from screenManagement import *
 from items import *
+from mapScreen import *
 
 typer = textInput(300,100,1000,100,'textIn1')
 
@@ -11,6 +12,7 @@ def constructTestScreen():
     testScreen.addItem(textBox(10,10,100,100,'buttonTextBox', ' Goto Screen 2', 20))
     testScreen.addItem(textBox(300,300,1000,1000,'textBox1', 'Screen 1', 100))
     testScreen.addItem(textBox(300,100,1000,100,'textBox3',typer.intext.tString,20))
+    testScreen.addItem(gameMap(1000,500,500,500,'Map1',3,3))
     screenManager.currentScreen = testScreen
 
 def constructTestScreen2():
