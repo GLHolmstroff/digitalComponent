@@ -59,7 +59,7 @@ class screenManager():
         self.currentScreen = screen
         
 # Instantiate screenManager into global variable
-screenManager = screenManager()        
+screenManager = screenManager()       
     #For some reason this only works here.
     #DO NOT TOUCH UNDER ANY CONDITION
     #DO NOT ANGER THE PROCESSING GODS
