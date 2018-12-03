@@ -82,18 +82,23 @@ class clickableWater(clickableTile):
         super(clickableWater, self).__init__(x,y,w,h,name,0,'#4A8EA5',0,False,False,False)
         
 class gameMap(item):
-    def __init__(self, x,y,w,h,name,columns,rows, **kwargs):
+    def __init__(self, x,y,w,h,name,rows, **kwargs):
         super(gameMap, self).__init__(x,y,w,h,name)
         self.tiles = list()
         self.rows = rows
-        self.columns = columns
+        self.columns = rows
+        self.waterFill()
+        
+        
+    def waterFill(self):
+        self.tiles = list()
         for a in range(self.columns):
             self.tiles.append(list())
         for a in range (self.columns):
             for b in range (self.rows):
                 self.tiles[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
         self.displayPrep()
-    
+        
     # Moves hexagons into place to display as grid
     def displayPrep(self):
         for tilelist in self.tiles:
@@ -117,9 +122,26 @@ class gameMap(item):
             self.tiles[x-1][y-1] = tile
         self.displayPrep()
         
+    def incSize(self, x):
+        self.rows += x
+        self.columns += x
+        self.waterFill()
+    
+    def decSize(self, x):
+        self.rows = self.rows - x
+        if self.rows < 1:
+            self.rows = 1
+        self.columns = self.columns - x
+        if self.columns < 1:
+            self.columns = 1
+        self.waterFill()
+        
+    
+    
+        
 class clickableMap(gameMap,clickable):
-    def __init__(self,x,y,w,h,name,columns,rows, **kwargs):
-        super(clickableMap, self).__init__(x,y,w,h,name,columns,rows)
+    def __init__(self,x,y,w,h,name,rows, **kwargs):
+        super(clickableMap, self).__init__(x,y,w,h,name,rows)
     
     def onClick(self):
         for tilelist in self.tiles:

@@ -23,7 +23,7 @@ class Screen():
             i.display()
 
     #manage actions from user
-    def action(self, action):
+    def action(self, action, *args):
         #could only think of clicking now
         if action == 'click':
             for item in self.items:

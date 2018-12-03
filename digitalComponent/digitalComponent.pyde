@@ -3,19 +3,16 @@ from screenManagement import *
 from testScreen import *
 
 
-
-
-
 def setup():
     fullScreen()
     frameRate(35)
     noStroke()
     # Caladea = loadFont('Caladea-Regular-48.vlw')
     # textFont(Caladea)
-    map1 = clickableMap(1000,500,500,300,'Map1',5,3)
-    typer = textInput(300,100,1000,100,'textIn1')
     global map1
     global typer
+    map1 = clickableMap(1000,300,500,500,'Map1', 5)
+    typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
     testScreen.addItem(checkbox(200,200,40,20,'checkbox1',False,'kdfs'))
@@ -23,7 +20,8 @@ def setup():
     testScreen.addItem(textBox(10,10,100,100,'buttonTextBox', ' Goto Screen 2', 20))
     testScreen.addItem(textBox(300,300,1000,1000,'textBox1', 'Screen 1', 100))
     testScreen.addItem(textBox(300,100,1000,100,'textBox3',typer.intext.tString,20))
-    testScreen.addItem(valButton(400,400,100,100,'val+',1,map1.columns,map1.rows))
+    testScreen.addItem(funButton(400,400,100,100,'val+',map1.incSize,1))
+    testScreen.addItem(funButton(400,550,100,100,'val-',map1.decSize,1))
     map1.editTile(3,3,clickableDesert(0,0,0,0,''))
     map1.editTile(3,2,clickableSwamp(0,0,0,0,''))
     map1.editTile(1,1,clickableForest(0,0,0,0,''))

@@ -96,9 +96,16 @@ class valButton(button):
     
     def onClick(self, *args):
         for x in self.targetVars:
-            print(x)
-            x = self.value + x
-            print(x)
+            x = x + self.value
+            
+class funButton(button):
+    def __init__(self,x,y,w,h,name,fun,*args,**kwargs):
+        self.fun = fun
+        self.args = args
+        super(funButton, self).__init__(x,y,w,h,name, **kwargs)
+    
+    def onClick(self, *args):
+        self.fun(*self.args)
 
         
 class checkbox(clickable):
