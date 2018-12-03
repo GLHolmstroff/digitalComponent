@@ -23,7 +23,7 @@ class Screen():
             i.display()
 
     #manage actions from user
-    def action(self, action):
+    def action(self, action, *args):
         #could only think of clicking now
         if action == 'click':
             for item in self.items:
@@ -59,7 +59,7 @@ class screenManager():
         self.currentScreen = screen
         
 # Instantiate screenManager into global variable
-screenManager = screenManager()        
+screenManager = screenManager()       
     #For some reason this only works here.
     #DO NOT TOUCH UNDER ANY CONDITION
     #DO NOT ANGER THE PROCESSING GODS

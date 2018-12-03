@@ -89,13 +89,23 @@ class linkButton(button):
         self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
 class valButton(button):
-    def __init__(self,x,y,w,h,name, value, targetVar, **kwargs):
+    def __init__(self,x,y,w,h,name, value, *targetVars, **kwargs):
         self.value = value
-        self.targetVar = targetVar
+        self.targetVars = targetVars
         super(valButton, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
-        self.targetVar += self.value
+        for x in self.targetVars:
+            x = x + self.value
+            
+class funButton(button):
+    def __init__(self,x,y,w,h,name,fun,*args,**kwargs):
+        self.fun = fun
+        self.args = args
+        super(funButton, self).__init__(x,y,w,h,name, **kwargs)
+    
+    def onClick(self, *args):
+        self.fun(*self.args)
 
         
 class checkbox(clickable):
@@ -121,6 +131,3 @@ class checkbox(clickable):
         else:
             fill(80)
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
-        
-        
-            
