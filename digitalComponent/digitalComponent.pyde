@@ -17,6 +17,7 @@ def setup():
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
     testScreen.addItem(linkButton(10,10,100,100,'linkButton1','winScreen',screenManager, tString = 'Go to winScreen'))
+    testScreen.addItem(linkButton(10,120,100,100,'mapToShop','shopScreen',screenManager, tString = 'Go to Shop'))
     testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Map', 50))
     testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',map1.incSize,1,tString='+'))
     testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',map1.decSize,1,tString='-'))
@@ -227,7 +228,8 @@ def setup():
     shopScreen.addItem(variableText(550,340,100,30,'varText1',game.currentPlayer.vals, 'towers', tSize = 20, tColor = color(255)))
 
     shopScreen.addItem(funButton(400, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
-
+    shopScreen.addItem(linkButton(400, height - 200, 200,50,'mapButton','testScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
+    
     battleSimScreen = Screen('battleSim')
     screenManager.addScreen(battleSimScreen)
     testScreen.addItem(linkButton(10,230,100,100,'battleSimScreen','battleSim',screenManager,tString = 'Battle Simulator'))
