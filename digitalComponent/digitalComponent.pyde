@@ -1,6 +1,7 @@
 from gameManagement import *
 from screenManagement import *
 from testScreen import *
+from dice import *
 
 
 def setup():
@@ -35,6 +36,12 @@ def setup():
     testScreen2.addItem(textBox(10,10,100,100,'buttonTextBox', ' Goto Screen 1', 20))
     testScreen2.addItem(textBox(300,300,1000,1000,'textBox2', 'Screen 2', 100))
     testScreen2.addItem(typer)
+    dice1 = dice(200,500,100,100,'dice1',1)
+    dice2 = dice(300,500,100,100,'dice2',2)
+    dice3 = dice(400, 500, 100, 100,'dice3',3)
+    diceGroup1 = diceGroup(200,500,300,100,'diceGroup1',dice1,dice2,dice3)
+    testScreen2.addItem(diceGroup1)
+    # testScreen2.addItem(funButton(225, 650, 50, 50,'diceroll1',dice1.diceRoll))
 
     
 
