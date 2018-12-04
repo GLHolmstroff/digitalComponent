@@ -70,9 +70,9 @@ def setup():
     winScreen.addItem(linkButton(250,400,120,50,'testWin','winScreen2',screenManager))
     winScreen2 = Screen('winScreen2')
     screenManager.addScreen(winScreen2)
-    winScreen2.addItem(textBox(200,250,3000,3000,'winText','Winner Winner Chicken Dinner',100,tColor = '17325547'))
-    winScreen2.addItem(textBox(1500,1000,3000,3000,'winText',player+' won',30,tColor = '17325547'))
-    winScreen2.addItem(textBox(500,500,3000,3000,'winText','restart',100,tColor = '17325547'))
+    winScreen2.addItem(textBox(200,250,1000,500,'winText','Winner Winner Chicken Dinner',100,tColor = '17325547'))
+    winScreen2.addItem(textBox(200,450,1000,500,'winText',player+' won',30,tColor = '17325547'))
+    # winScreen2.addItem(textBox(500,500,100,100,'winText','restart',100,tColor = '17325547'))
 
 
     startScreen = Screen('startScreen')
