@@ -1,5 +1,8 @@
 from items import *
 
+global pickedColour
+pickedColour = '#000000'
+
 class Tile(item):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
         super(Tile, self).__init__(x,y,w,h,name, **kwargs)
@@ -28,11 +31,11 @@ class clickableTile(Tile, clickable):
         super(clickableTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil, **kwargs)
     
     def onClick(self):
-        self.colour = 255
+        self.colour = pickedColour
     
     def onHover(self):
         pass
-
+        
 class Desert(Tile):
     def __init__(self,x,y,w,h,name):
         super(Desert, self).__init__(x,y,w,h,name,2,'#DAA33A',2,True,True,False)
@@ -153,5 +156,54 @@ class clickableMap(gameMap,clickable):
     
     def onHover(self):
         pass
+        
+class colourPicker(button):
+    def __init__(self,x,y,w,h,name,colour, **kwargs):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.name = name
+        colours = ['#DAA33A','#8CA74D','#C02823','#F0E5B4','#3D342D','#4A8EA5']
+        if colour in colours:
+            self.colour = colour
+        else:
+            self.colour = '#4A8EA5'
+        self.active = False
+        
+    def display(self):
+        if pickedColour == self.colour:
+            self.active = True
+        else:
+            self.active = False
+        fill(self.colour)
+        if self.active:
+            h = createShape()
+            h.beginShape()
+            h.vertex(self.x,self.y)
+            h.vertex(self.x + 0.6*self.w,self.y)
+            h.vertex(self.x + 0.9*self.w,self.y+0.6*self.h)
+            h.vertex(self.x + 0.6*self.w,self.y+1.1*self.h)
+            h.vertex(self.x, self.y + 1.1 * self.h)
+            h.vertex(self.x - 0.3*self.w,self.y+0.6*self.h)
+            h.endShape(CLOSE)
+            shape(h)
+        if not self.active:
+            h = createShape()
+            h.beginShape()
+            h.vertex(self.x,self.y)
+            h.vertex(self.x + 0.5*self.w,self.y)
+            h.vertex(self.x + 0.75*self.w,self.y+0.5*self.h)
+            h.vertex(self.x + 0.5*self.w,self.y+self.h)
+            h.vertex(self.x, self.y+self.h)
+            h.vertex(self.x - 0.25*self.w,self.y+0.5*self.h)
+            h.endShape(CLOSE)
+            shape(h)
+        
+    def onClick(self):
+        self.active = True
+        global pickedColour
+        pickedColour = self.colour
+        print(self.active)
         
 selected = Mountain(0,0,0,0,'')                   
