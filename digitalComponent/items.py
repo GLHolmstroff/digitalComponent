@@ -7,11 +7,20 @@ class item(object):
         self.y = y
         self.w = w
         self.h = h
+        self.backgroundColor = color(80)
         
     #default displaying    
     def display(self):
         fill(80)
         rect(self.x,self.y,self.w,self.h)
+
+class img(item):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(img, self).__init__(x,y,w,h,name, **kwargs)
+        self.img = loadImage(kwargs.get('imgUrl'))
+        
+    def display(self):
+        image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
     def __init__(self,x,y,w,h,name, tString = '', tSize = 24, tColor = '000000'):
@@ -69,7 +78,10 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name, **kwargs):
+    def __init__(self,x,y,w,h,name,tString = '', tSize = 20, tColor = '000', **kwargs):
+        self.tString = tString
+        self.tSize = tSize
+        self.tColor = tColor
         super(button, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
@@ -77,6 +89,13 @@ class button(clickable):
     
     def onHover(self):
         pass
+    
+    def display(self):
+        fill(self.backgroundColor)
+        rect(self.x,self.y,self.w,self.h,10,10,10,10)
+        fill(self.tColor)
+        textSize(self.tSize)
+        text(self.tString,self.x,self.y,self.w,self.h)
     
 class linkButton(button):
     
@@ -106,7 +125,48 @@ class funButton(button):
     
     def onClick(self, *args):
         self.fun(*self.args)
-
+        
+class dropDown(clickable):
+    def __init__(self,x,y,w,h,name,title,*options,**kwargs):
+        super(dropDown, self).__init__(x,y,w,h,name)
+        self.title = title
+        self.options = options
+        self.active = False
+        self.output = 0
+        self.baseh = h
+        
+    def display(self):
+        fill(200)
+        rect(self.x,self.y,self.w,self.baseh,10,10,10,10)
+        fill(0)
+        triangle(self.x + 0.85 * self.w, self.y + 0.1 * self.h, self.x + 0.95 * self.w, self.y + 0.1 * self.h, self.x + 0.9* self.w, self.y + 0.8 * self.h )
+        text(self.title,self.x,self.y,self.w,self.h)
+        if self.active:
+            fill(255)
+            rect(self.x,self.y,self.w,self.baseh,10,10,10,10)
+            fill(0)
+            text(self.title,self.x,self.y,self.w,self.h)
+            fill(255)
+            for option in range(len(self.options)):
+                rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh,10,10,10,10)
+                fill(0)
+                text(str(self.options[option]),self.x,self.y + (option+1) * self.baseh,self.w,self.baseh)
+                fill(255)
+            
+    def onClick(self):
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y and mouseY < self.y + self.h:
+            if  not self.active:
+                self.active = True
+                self.h = (len(self.options) + 1) * self.baseh
+            else:
+                self.active = False
+                self.h = self.baseh
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.output = (mouseY - self.y)//self.baseh-1
+            # print(self.options[self.output])
+        
+    def onHover(self):
+        pass
         
 class checkbox(clickable):
     def __init__(self,x,y,w,h,name, defaultValue, targetVar, **kwargs):
@@ -131,3 +191,16 @@ class checkbox(clickable):
         else:
             fill(80)
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
+
+class amountInput(textInput):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(amountInput, self).__init__(x,y,w,h,name, **kwargs)
+    
+    def display(self):
+        fill(200)
+        if self.active:
+            fill(255)
+        rect(self.x,self.y,self.w,self.h)
+        self.intext.display()
+    
+        
