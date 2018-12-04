@@ -1,17 +1,17 @@
 from screenManagement import *
 
 class item(object):
-    def __init__(self, x,y,w,h,name, **kwargs):
+    def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
         self.name = name
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        self.backgroundColor = color(80)
+        self.backgroundColor = backgroundColor
         
     #default displaying    
     def display(self):
-        fill(80)
+        fill(self.backgroundColor)
         rect(self.x,self.y,self.w,self.h)
 
 class img(item):
@@ -28,6 +28,7 @@ class textBox(item):
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
+        
     
     def display(self):
         fill(self.tColor)
@@ -108,14 +109,17 @@ class linkButton(button):
         self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
 class valButton(button):
-    def __init__(self,x,y,w,h,name, value, *targetVars, **kwargs):
+    def __init__(self,x,y,w,h,name, value, location, item, *targetVars, **kwargs):
         self.value = value
+        self.location = location
+        self.item = item
         self.targetVars = targetVars
         super(valButton, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
-        for x in self.targetVars:
-            x = x + self.value
+        # for x in self.targetVars:
+        #     x = x + self.value
+        self.location[self.item] += self.value
             
 class funButton(button):
     def __init__(self,x,y,w,h,name,fun,*args,**kwargs):
@@ -192,15 +196,24 @@ class checkbox(clickable):
             fill(80)
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
 
-class amountInput(textInput):
-    def __init__(self,x,y,w,h,name,**kwargs):
-        super(amountInput, self).__init__(x,y,w,h,name, **kwargs)
+class variableText(textBox):
+    def __init__(self,x,y,w,h,name,location,item, tColor = 'fff', tSize = 20):
+        super(variableText,self).__init__(x,y,w,h,name)
+        self.tColor = tColor
+        self.tSize = tSize
+        self.location = location
+        self.item = item
+        self.value = self.location.get(self.item)
+        
+    def update(self):
+        self.value = self.location.get(self.item)
     
     def display(self):
-        fill(200)
-        if self.active:
-            fill(255)
-        rect(self.x,self.y,self.w,self.h)
-        self.intext.display()
-    
+        self.value = self.location.get(self.item)
+        fill(self.tColor)
+        textSize(self.tSize)
+        text(str(self.value), self.x,self.y,self.w,self.h)
+        
+        
+        
         
