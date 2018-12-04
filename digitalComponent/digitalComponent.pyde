@@ -40,13 +40,18 @@ def setup():
     testScreen2.addItem(typer)
     
     startScreen = Screen('startScreen')
-    # screenManager.addScreen(startScreen)
+    screenManager.addScreen(startScreen)
     startScreen.addItem(img(width/2 - 250,height/2 - 400,500,600,'logo',imgUrl = 'data\Logo.png'))
-    startScreen.addItem(linkButton(width/2-50,height - 140,100,50,'startToTest','testScreen',screenManager,tString = 'Start'))
+    startScreen.addItem(linkButton(width/2-50,height - 140,100,50,'startToSetting','settingScreen',screenManager,tString = 'Start'))
     screenManager.currentScreen = startScreen
     
-
     
+    settingScreen = Screen('settingScreen')
+    screenManager.addScreen(settingScreen)
+    settingScreen.addItem(textBox(500,500,300,30,'AmountOfPlayersText', 'Amount of Players:',20))
+    settingScreen.addItem(amountInput(850,500,30,30,'AmountOfplayersInput'))
+    settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','testScreen',screenManager,tString = 'Start'))
+    # settingScreen.additem(funButton())
 
     
 def draw():

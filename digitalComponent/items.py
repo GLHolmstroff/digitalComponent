@@ -150,3 +150,16 @@ class checkbox(clickable):
         else:
             fill(80)
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
+
+class amountInput(textInput):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(amountInput, self).__init__(x,y,w,h,name, **kwargs)
+    
+    def display(self):
+        fill(200)
+        if self.active:
+            fill(255)
+        rect(self.x,self.y,self.w,self.h)
+        self.intext.display()
+    
+        
