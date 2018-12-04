@@ -38,11 +38,8 @@ def setup():
     testScreen2.addItem(textBox(10,10,100,100,'buttonTextBox', ' Goto Screen 1', 20))
     testScreen2.addItem(textBox(300,300,1000,1000,'textBox2', 'Screen 2', 100))
     testScreen2.addItem(typer)
-<<<<<<< HEAD
-=======
     testScreen2.addItem(dropDown(500,500,500,50,'dropdown1','This is a dropdown menu', 'this is option 1', 'this is option 2'))
 
->>>>>>> refs/remotes/origin/master
     
     startScreen = Screen('startScreen')
     screenManager.addScreen(startScreen)
