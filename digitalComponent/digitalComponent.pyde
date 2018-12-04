@@ -38,10 +38,26 @@ def setup():
     testScreen2.addItem(typer)
     dice1 = dice(200,500,100,100,'dice1',1)
     dice2 = dice(300,500,100,100,'dice2',2)
-    dice3 = dice(400, 500, 100, 100,'dice3',3)
-    diceGroup1 = diceGroup(200,500,300,100,'diceGroup1',dice1,dice2,dice3)
+    dice3 = dice(400,500,100,100,'dice3',3)
+    dice4 = dice(500,500,100,100,'dice4',4)
+    dice5 = dice(600,500,100,100,'dice5',5)
+    dice6 = dice(700,500,100,100,'dice6',6)
+    dice7 = dice(200,300,100,100,'dice7',1)
+    dice8 = dice(300,300,100,100,'dice8',2)
+    dice9 = dice(400,300,100,100,'dice9',3)
+    dice10 = dice(500,300,100,100,'dice10',4)
+    dice11 = dice(600,300,100,100,'dice11',5)
+    dice12 = dice(700,300,100,100,'dice12',6)
+    diceGroup1 = diceGroup(200,500,600,100,'diceGroup1',dice1,dice2,dice3,dice4,dice5,dice6)
+    diceGroup2 = diceGroup(200,300,600,100,'diceGroup2',dice7,dice8,dice9,dice10,dice11,dice12)
     testScreen2.addItem(diceGroup1)
-    # testScreen2.addItem(funButton(225, 650, 50, 50,'diceroll1',dice1.diceRoll))
+    testScreen2.addItem(diceGroup2)
+    diceScreen = Screen('diceScreen')
+    screenManager.addScreen('diceScreen')
+    diceScreen.addItem(diceGroup1)
+    diceScreen.addItem(diceGroup2)
+    
+    
 
     
 
