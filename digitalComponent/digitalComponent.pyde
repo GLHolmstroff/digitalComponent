@@ -7,10 +7,13 @@ def setup():
     fullScreen()
     frameRate(35)
     noStroke()
+    textAlign(CENTER,CENTER)
     # Caladea = loadFont('Caladea-Regular-48.vlw')
     # textFont(Caladea)
     global map1
     global typer
+    global game
+    game = Game()
     map1 = clickableMap(1000,300,500,500,'Map1', 5)
     typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
@@ -35,6 +38,13 @@ def setup():
     testScreen2.addItem(textBox(10,10,100,100,'buttonTextBox', ' Goto Screen 1', 20))
     testScreen2.addItem(textBox(300,300,1000,1000,'textBox2', 'Screen 2', 100))
     testScreen2.addItem(typer)
+    
+    startScreen = Screen('startScreen')
+    # screenManager.addScreen(startScreen)
+    startScreen.addItem(img(width/2 - 250,height/2 - 400,500,600,'logo',imgUrl = 'data\Logo.png'))
+    startScreen.addItem(linkButton(width/2-50,height - 140,100,50,'startToTest','testScreen',screenManager,tString = 'Start'))
+    screenManager.currentScreen = startScreen
+    
 
     
 

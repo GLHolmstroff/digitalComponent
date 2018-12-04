@@ -7,11 +7,20 @@ class item(object):
         self.y = y
         self.w = w
         self.h = h
+        self.backgroundColor = color(80)
         
     #default displaying    
     def display(self):
         fill(80)
         rect(self.x,self.y,self.w,self.h)
+
+class img(item):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(img, self).__init__(x,y,w,h,name, **kwargs)
+        self.img = loadImage(kwargs.get('imgUrl'))
+        
+    def display(self):
+        image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
     def __init__(self,x,y,w,h,name, tString = '', tSize = 24, tColor = '000000'):
@@ -69,7 +78,10 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name, **kwargs):
+    def __init__(self,x,y,w,h,name,tString = '', tSize = 20, tColor = '000', **kwargs):
+        self.tString = tString
+        self.tSize = tSize
+        self.tColor = tColor
         super(button, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
@@ -77,6 +89,13 @@ class button(clickable):
     
     def onHover(self):
         pass
+    
+    def display(self):
+        fill(self.backgroundColor)
+        rect(self.x,self.y,self.w,self.h,10,10,10,10)
+        fill(self.tColor)
+        textSize(self.tSize)
+        text(self.tString,self.x,self.y,self.w,self.h)
     
 class linkButton(button):
     
