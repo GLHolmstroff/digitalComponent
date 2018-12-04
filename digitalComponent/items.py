@@ -125,7 +125,48 @@ class funButton(button):
     
     def onClick(self, *args):
         self.fun(*self.args)
-
+        
+class dropDown(clickable):
+    def __init__(self,x,y,w,h,name,title,*options,**kwargs):
+        super(dropDown, self).__init__(x,y,w,h,name)
+        self.title = title
+        self.options = options
+        self.active = False
+        self.output = 0
+        self.baseh = h
+        
+    def display(self):
+        fill(200)
+        rect(self.x,self.y,self.w,self.baseh,10,10,10,10)
+        fill(0)
+        triangle(self.x + 0.85 * self.w, self.y + 0.1 * self.h, self.x + 0.95 * self.w, self.y + 0.1 * self.h, self.x + 0.9* self.w, self.y + 0.8 * self.h )
+        text(self.title,self.x,self.y,self.w,self.h)
+        if self.active:
+            fill(255)
+            rect(self.x,self.y,self.w,self.baseh,10,10,10,10)
+            fill(0)
+            text(self.title,self.x,self.y,self.w,self.h)
+            fill(255)
+            for option in range(len(self.options)):
+                rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh,10,10,10,10)
+                fill(0)
+                text(str(self.options[option]),self.x,self.y + (option+1) * self.baseh,self.w,self.baseh)
+                fill(255)
+            
+    def onClick(self):
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y and mouseY < self.y + self.h:
+            if  not self.active:
+                self.active = True
+                self.h = (len(self.options) + 1) * self.baseh
+            else:
+                self.active = False
+                self.h = self.baseh
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.output = (mouseY - self.y)//self.baseh-1
+            # print(self.options[self.output])
+        
+    def onHover(self):
+        pass
         
 class checkbox(clickable):
     def __init__(self,x,y,w,h,name, defaultValue, targetVar, **kwargs):
