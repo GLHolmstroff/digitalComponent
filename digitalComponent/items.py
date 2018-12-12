@@ -23,23 +23,30 @@ class img(item):
         image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
-    def __init__(self,x,y,w,h,name, tString = '', tSize = 24, tColor = '000000'):
-        super(textBox, self).__init__(x,y,w,h,name)
-        self.tString = tString
+    def __init__(self,x,y,w,h,name, var, tSize = 24, tColor = '000000'):
+        super(textBox, self).__init__(x,y,w,h,name)    
+        self._tString = str(var)
         self.tSize = tSize
         self.tColor = tColor
-        
+    
+    @property
+    def tString(self):
+        return self._tString
+    
+    @tString.setter
+    def tString(self,x):
+        self._tString = x
     
     def display(self):
         fill(self.tColor)
         textSize(self.tSize)
-        text(self.tString,self.x,self.y,self.w,self.h)
+        text(str(self.tString),self.x,self.y,self.w,self.h)
     
     def addend(self,c):
-        self.tString = self.tString + str(c)
+        self._tString = self._tString + str(c)
     
     def remend(self):
-        self.tString = self.tString[0:(len(self.tString)-1)]
+        self._tString = self._tString[0:(len(self._tString)-1)]
      
 
 class clickable(item):
@@ -55,7 +62,7 @@ class clickable(item):
 class textInput(clickable):
     def __init__(self,x,y,w,h,name, **kwargs):
         super(textInput, self).__init__(x,y,w,h,name, **kwargs)
-        textbox = textBox(self.x,self.y,self.w,self.h,self.name,)
+        textbox = textBox(self.x,self.y,self.w,self.h,self.name,'')
         self.intext = textbox
         self.active = False
     
@@ -79,7 +86,7 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name,tString = '', tSize = 20, tColor = '000', **kwargs):
+    def __init__(self,x,y,w,h,name,tString='', tSize = 20, tColor = '000', **kwargs):
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
@@ -134,6 +141,7 @@ class dropDown(clickable):
     def __init__(self,x,y,w,h,name,title,*options,**kwargs):
         super(dropDown, self).__init__(x,y,w,h,name)
         self.title = title
+        self.basetitle = title
         self.options = options
         self.active = False
         self.output = 0
@@ -167,19 +175,23 @@ class dropDown(clickable):
                 self.h = self.baseh
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh-1
+            self.title = str(self.options[self.output])
             # print(self.options[self.output])
         
     def onHover(self):
         pass
+    
         
 class checkbox(clickable):
     def __init__(self,x,y,w,h,name, defaultValue, targetVar, **kwargs):
        
-        self.value = defaultValue 
+        self.value = defaultValue
+        self.targetVar = targetVar 
         super(checkbox, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
         self.value = not(self.value)
+        self.targetVar = not(self.targetVar)
         
         
     def display(self):
@@ -198,7 +210,7 @@ class checkbox(clickable):
 
 class variableText(textBox):
     def __init__(self,x,y,w,h,name,location,item, tColor = 'fff', tSize = 20):
-        super(variableText,self).__init__(x,y,w,h,name)
+        super(variableText,self).__init__(x,y,w,h,name,'')
         self.tColor = tColor
         self.tSize = tSize
         self.location = location
@@ -215,5 +227,18 @@ class variableText(textBox):
         text(str(self.value), self.x,self.y,self.w,self.h)
         
         
+class varBox(textBox):
+    def __init__(self,x,y,w,h,name,parent,var,tColor = 'fff', tSize = 20):
+        super(varBox,self).__init__(x,y,w,h,name,'')
+        self.tColor = tColor
+        self.tSize = tSize
+        self.parent = parent
+        self.var = var
+        self.out = getattr(self.parent,self.var)
+    
+    def display(self):
         
+        fill(self.tColor)
+        textSize(self.tSize)
+        text(str(self.out), self.x,self.y,self.w,self.h)
         

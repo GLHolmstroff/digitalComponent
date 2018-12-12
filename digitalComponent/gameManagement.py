@@ -7,8 +7,8 @@ class Game():
         self.board = Board()
     
     def nextPlayer(self):
-        print('next')
-        if self.currentPlayerIndex < 4:
+        # print(self.currentPlayer.name)
+        if self.currentPlayerIndex < 3:
             self.currentPlayerIndex += 1
             self.currentPlayer = self.players[self.currentPlayerIndex]
         else:
