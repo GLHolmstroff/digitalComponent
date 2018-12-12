@@ -1,5 +1,6 @@
 from screenManagement import *
 
+
 class item(object):
     def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
         self.name = name
@@ -23,19 +24,11 @@ class img(item):
         image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
-    def __init__(self,x,y,w,h,name, var, tSize = 24, tColor = '000000'):
+    def __init__(self,x,y,w,h,name, tString, tSize = 24, tColor = '000000'):
         super(textBox, self).__init__(x,y,w,h,name)    
-        self._tString = str(var)
+        self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
-    
-    @property
-    def tString(self):
-        return self._tString
-    
-    @tString.setter
-    def tString(self,x):
-        self._tString = x
     
     def display(self):
         fill(self.tColor)
@@ -129,13 +122,28 @@ class valButton(button):
         self.location[self.item] += self.value
             
 class funButton(button):
-    def __init__(self,x,y,w,h,name,fun,*args,**kwargs):
+    def __init__(self,x,y,w,h,name,fun,arg = None,**kwargs):
         self.fun = fun
-        self.args = args
+        self.arg = arg
         super(funButton, self).__init__(x,y,w,h,name, **kwargs)
     
-    def onClick(self, *args):
-        self.fun(*self.args)
+    def onClick(self):
+        if self.arg is not None:
+            self.fun(self.arg)
+        else:
+            self.fun()
+        
+class varFunButton(funButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,**kwargs):
+        super(varFunButton, self).__init__(x,y,w,h,name,fun,arg)
+        self.parents = parents
+        self.attrname = attrname
+        for x in range(len(self.parents)):
+            self.parents[x].bindTo(self.update)
+            
+    def update(self,value):
+        self.fun = getattr(value, self.attrname)
+        
         
 class dropDown(clickable):
     def __init__(self,x,y,w,h,name,title,*options,**kwargs):
@@ -176,7 +184,7 @@ class dropDown(clickable):
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh-1
             self.title = str(self.options[self.output])
-            # print(self.options[self.output])
+
         
     def onHover(self):
         pass
@@ -228,17 +236,19 @@ class variableText(textBox):
         
         
 class varBox(textBox):
-    def __init__(self,x,y,w,h,name,parent,var,tColor = 'fff', tSize = 20):
+    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):
         super(varBox,self).__init__(x,y,w,h,name,'')
         self.tColor = tColor
         self.tSize = tSize
-        self.parent = parent
+        self.parents = parents
         self.var = var
-        self.out = getattr(self.parent,self.var)
-    
-    def display(self):
+        self.tString = var
+        self.attrname = attrname
+        for x in range(len(self.parents)):
+            self.parents[x].bindTo(self.update)
         
-        fill(self.tColor)
-        textSize(self.tSize)
-        text(str(self.out), self.x,self.y,self.w,self.h)
+    def update(self,value):
+        self.tString = getattr(value, self.attrname)
+        print (self.tString)
+    
         

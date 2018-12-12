@@ -1,7 +1,6 @@
 from items import *
 from collections import OrderedDict
 
-global pickedColour
 pickedColour = '#4A8EA5'
 
 class Tile(item):
