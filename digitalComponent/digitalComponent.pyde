@@ -9,7 +9,7 @@ def setup():
     fullScreen()
     print(width,height)
     frameRate(35)
-    noStroke()
+    # noStroke()
     textAlign(CENTER,CENTER)
     game = Game()
     map1 = clickableMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map1', 5)
@@ -19,8 +19,8 @@ def setup():
     testScreen.addItem(linkButton(10,10,100,100,'linkButton1','winScreen',screenManager, tString = 'Go to winScreen'))
     testScreen.addItem(linkButton(10,120,100,100,'mapToShop','shopScreen',screenManager, tString = 'Go to Shop'))
     testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Map', 50))
-    testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',map1.incSize,1,tString='+'))
-    testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',map1.decSize,1,tString='-'))
+    testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',map1.incSize,tString='+'))
+    testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',map1.decSize,tString='-'))
     testScreen.addItem(map1)
     testScreen.addItem(colourPicker(1300,300,100,100,'desertPicker','#DAA33A'))
     testScreen.addItem(colourPicker(1600,300,100,100,'forestPicker','#8CA74D'))
@@ -59,11 +59,12 @@ def setup():
 
     winScreen = Screen("winScreen")
     screenManager.addScreen(winScreen)
+    laststanding = False
     winScreen.addItem(textBox(250,100,900,100,'textBox1', 'Choose one of the following winconditions', 50))
     winScreen.addItem(textBox(350,250,500,100,'textBox1', 'last one standing', 30))
     winScreen.addItem(textBox(700,250,500,100,'textBox1', '3 castles', 30))
     winScreen.addItem(textBox(1200,250,500,100,'textBox1', 'fist conqueror wins', 30))
-    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,"default"))
+    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,laststanding))
     winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,"3caslte"))
     winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,"1st"))
     winScreen.addItem(linkButton(10,10,100,100,'linkButton1','testScreen',screenManager, tString='Go to Map'))
@@ -92,8 +93,8 @@ def setup():
     settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','shopScreen',screenManager,tString = 'Start'))
 
     #I make 4 players just for testing
-    for i in range(5):
-        game.players.append(Player('player' + str(i), color(60)))
+    for i in range(4):
+        game.players.append(Player('player ' + str(i + 1), color(60)))
     game.currentPlayer = game.players[i]
     game.currentPlayerIndex = i
 
@@ -106,7 +107,13 @@ def setup():
     playersOverview = item(0,height - 500,width-400,500,'playersOverview')
     playersOverview.backgroundColor = color(81)
     shopScreen.addItem(playersOverview)
-    shopScreen.addItem(textBox(30,20,600,100,'currentplayerTextbox',game.currentPlayer.name,40))
+    currentplayerbox = varBox(30,20,600,100,'currentplayerTextbox', game.currentPlayer,'name' ,tSize = 40, tColor = color(0))
+    print(game.currentPlayer.name)
+    print(currentplayerbox.var)
+    game.nextPlayer()
+    print(game.currentPlayer.name)
+    print(currentplayerbox.var)
+    shopScreen.addItem(currentplayerbox)
 
     #adding all the add buttons
     t = textBox(width - 380, 30, 280, 40, 'swampTextbox', 'Swamp', 20)
@@ -191,7 +198,7 @@ def setup():
     shopScreen.addItem(textBox(width - 90, 930, 80, 40, 'addWallsButtonText', 'add', 20))
 
     shopScreen.addItem(textBox(40,100,200,30,'currentPlayerSwampText', 'Swamps:',20,color(255)))
-    shopScreen.addItem(variableText(250,100,100,30,'varText1',game.currentPlayer.vals, 'swamp', tSize = 20, tColor = color(255)))
+    shopScreen.addItem(variableText(250,100,100,30,'varText1',game.currentPlayer.vals,'swamp',tSize = 20, tColor = color(255)))
 
     shopScreen.addItem(textBox(40,140,200,30,'currentPlayerDesertText', 'Deserts:',20,color(255)))
     shopScreen.addItem(variableText(250,140,100,30,'varText1',game.currentPlayer.vals, 'desert', tSize = 20, tColor = color(255)))
