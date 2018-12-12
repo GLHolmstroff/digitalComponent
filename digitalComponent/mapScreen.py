@@ -1,7 +1,7 @@
 from items import *
 
 global pickedColour
-pickedColour = '#000000'
+pickedColour = '#4A8EA5'
 
 class Tile(item):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
