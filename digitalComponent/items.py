@@ -36,10 +36,10 @@ class textBox(item):
         text(str(self.tString),self.x,self.y,self.w,self.h)
     
     def addend(self,c):
-        self._tString = self._tString + str(c)
+        self.tString = self.tString + str(c)
     
     def remend(self):
-        self._tString = self._tString[0:(len(self._tString)-1)]
+        self.tString = self.tString[0:(len(self.tString)-1)]
      
 
 class clickable(item):

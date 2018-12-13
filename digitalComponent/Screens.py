@@ -5,6 +5,7 @@ from dice import *
 from winScreen import *
 
 
+
 def setUpGame():
     game = Game()
     #I make 4 players just for testing
