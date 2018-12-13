@@ -1,17 +1,18 @@
 from screenManagement import *
 
+
 class item(object):
-    def __init__(self, x,y,w,h,name, **kwargs):
+    def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
         self.name = name
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        self.backgroundColor = color(80)
+        self.backgroundColor = backgroundColor
         
     #default displaying    
     def display(self):
-        fill(80)
+        fill(self.backgroundColor)
         rect(self.x,self.y,self.w,self.h)
 
 class img(item):
@@ -23,8 +24,8 @@ class img(item):
         image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
-    def __init__(self,x,y,w,h,name, tString = '', tSize = 24, tColor = '000000'):
-        super(textBox, self).__init__(x,y,w,h,name)
+    def __init__(self,x,y,w,h,name, tString, tSize = 24, tColor = '000000'):
+        super(textBox, self).__init__(x,y,w,h,name)    
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
@@ -32,7 +33,7 @@ class textBox(item):
     def display(self):
         fill(self.tColor)
         textSize(self.tSize)
-        text(self.tString,self.x,self.y,self.w,self.h)
+        text(str(self.tString),self.x,self.y,self.w,self.h)
     
     def addend(self,c):
         self.tString = self.tString + str(c)
@@ -54,7 +55,7 @@ class clickable(item):
 class textInput(clickable):
     def __init__(self,x,y,w,h,name, **kwargs):
         super(textInput, self).__init__(x,y,w,h,name, **kwargs)
-        textbox = textBox(self.x,self.y,self.w,self.h,self.name,)
+        textbox = textBox(self.x,self.y,self.w,self.h,self.name,'')
         self.intext = textbox
         self.active = False
     
@@ -78,7 +79,7 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name,tString = '', tSize = 20, tColor = '000', **kwargs):
+    def __init__(self,x,y,w,h,name,tString='', tSize = 20, tColor = '000', **kwargs):
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
@@ -108,28 +109,47 @@ class linkButton(button):
         self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
 class valButton(button):
-    def __init__(self,x,y,w,h,name, value, *targetVars, **kwargs):
+    def __init__(self,x,y,w,h,name, value, location, item, *targetVars, **kwargs):
         self.value = value
+        self.location = location
+        self.item = item
         self.targetVars = targetVars
         super(valButton, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
-        for x in self.targetVars:
-            x = x + self.value
+        # for x in self.targetVars:
+        #     x = x + self.value
+        self.location[self.item] += self.value
             
 class funButton(button):
-    def __init__(self,x,y,w,h,name,fun,*args,**kwargs):
+    def __init__(self,x,y,w,h,name,fun,arg = None,**kwargs):
         self.fun = fun
-        self.args = args
+        self.arg = arg
         super(funButton, self).__init__(x,y,w,h,name, **kwargs)
     
-    def onClick(self, *args):
-        self.fun(*self.args)
+    def onClick(self):
+        if self.arg is not None:
+            self.fun(self.arg)
+        else:
+            self.fun()
+        
+class varFunButton(funButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,**kwargs):
+        super(varFunButton, self).__init__(x,y,w,h,name,fun,arg)
+        self.parents = parents
+        self.attrname = attrname
+        for x in range(len(self.parents)):
+            self.parents[x].bindTo(self.update)
+            
+    def update(self,value):
+        self.fun = getattr(value, self.attrname)
+        
         
 class dropDown(clickable):
     def __init__(self,x,y,w,h,name,title,*options,**kwargs):
         super(dropDown, self).__init__(x,y,w,h,name)
         self.title = title
+        self.basetitle = title
         self.options = options
         self.active = False
         self.output = 0
@@ -163,19 +183,23 @@ class dropDown(clickable):
                 self.h = self.baseh
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh-1
-            # print(self.options[self.output])
+            self.title = str(self.options[self.output])
+
         
     def onHover(self):
         pass
+    
         
 class checkbox(clickable):
     def __init__(self,x,y,w,h,name, defaultValue, targetVar, **kwargs):
        
-        self.value = defaultValue 
+        self.value = defaultValue
+        self.targetVar = targetVar 
         super(checkbox, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
         self.value = not(self.value)
+        self.targetVar = not(self.targetVar)
         
         
     def display(self):
@@ -192,15 +216,39 @@ class checkbox(clickable):
             fill(80)
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
 
-class amountInput(textInput):
-    def __init__(self,x,y,w,h,name,**kwargs):
-        super(amountInput, self).__init__(x,y,w,h,name, **kwargs)
+class variableText(textBox):
+    def __init__(self,x,y,w,h,name,location,item, tColor = 'fff', tSize = 20):
+        super(variableText,self).__init__(x,y,w,h,name,'')
+        self.tColor = tColor
+        self.tSize = tSize
+        self.location = location
+        self.item = item
+        self.value = self.location.get(self.item)
+        
+    def update(self):
+        self.value = self.location.get(self.item)
     
     def display(self):
-        fill(200)
-        if self.active:
-            fill(255)
-        rect(self.x,self.y,self.w,self.h)
-        self.intext.display()
+        self.value = self.location.get(self.item)
+        fill(self.tColor)
+        textSize(self.tSize)
+        text(str(self.value), self.x,self.y,self.w,self.h)
+        
+        
+class varBox(textBox):
+    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):
+        super(varBox,self).__init__(x,y,w,h,name,'')
+        self.tColor = tColor
+        self.tSize = tSize
+        self.parents = parents
+        self.var = var
+        self.tString = var
+        self.attrname = attrname
+        for x in range(len(self.parents)):
+            self.parents[x].bindTo(self.update)
+        
+    def update(self,value):
+        self.tString = getattr(value, self.attrname)
+        print (self.tString)
     
         
