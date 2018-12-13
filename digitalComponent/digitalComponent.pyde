@@ -9,7 +9,7 @@ def setup():
     fullScreen()
     print(width,height)
     frameRate(35)
-    noStroke()
+    stroke(30)
     textAlign(CENTER,CENTER)
     game = Game()
     map1 = clickableMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map1', 5)
@@ -63,9 +63,9 @@ def setup():
     winScreen.addItem(textBox(350,250,500,100,'textBox1', 'last one standing', 30))
     winScreen.addItem(textBox(700,250,500,100,'textBox1', '3 castles', 30))
     winScreen.addItem(textBox(1200,250,500,100,'textBox1', 'fist conqueror wins', 30))
-    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,"default"))
-    winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,"3caslte"))
-    winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,"1st"))
+    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,game.setting,'lastOneStanding'))
+    winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,game.setting,'threeCastles'))
+    winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,game.setting,'firstKnockOut'))
     winScreen.addItem(linkButton(10,10,100,100,'linkButton1','testScreen',screenManager, tString='Go to Map'))
     winScreen.addItem(linkButton(10,120,100,100,'linkButton2','battleSim',screenManager, tString='Go to Battle'))
     winScreen.addItem(textBox(250,400,3000,1000,'`textBox1', 'TEST', 30))
@@ -230,6 +230,10 @@ def setup():
     shopScreen.addItem(funButton(400, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
     shopScreen.addItem(linkButton(400, height - 200, 200,50,'mapButton','testScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
     
+    
+    #create the battle class
+    #default battle players are random 
+    battle = Battle(game.currentPlayer, game.players[0],0,0,False,False,False,False)
     battleSimScreen = Screen('battleSim')
     screenManager.addScreen(battleSimScreen)
     testScreen.addItem(linkButton(10,230,100,100,'battleSimScreen','battleSim',screenManager,tString = 'Battle Simulator'))
@@ -244,13 +248,9 @@ def setup():
     battleSimScreen.addItem(textInput(150,575,500,50,'defenderInput'))
     battleSimScreen.addItem(textBox(1670,500,100,100,'troops2', 'Troops', 20))
     battleSimScreen.addItem(textInput(1270,575,500,50,'defenderInput'))
-    battleSimScreen.addItem(checkbox(1670,650,20,20,'walls',0,'walls'))
     battleSimScreen.addItem(textBox(1680,645,100,24,'walls', 'Walls', 20))
-    battleSimScreen.addItem(checkbox(1670,690,20,20,'tower',0,'tower'))
     battleSimScreen.addItem(textBox(1680,685,100,24,'tower', 'Tower', 20))
-    battleSimScreen.addItem(checkbox(1670,730,20,20,'castle',0,'castle'))
     battleSimScreen.addItem(textBox(1680,725,100,24,'castle', 'Castle', 20))
-    battleSimScreen.addItem(checkbox(1670,770,20,20,'palace',0,'palace'))
     battleSimScreen.addItem(textBox(1680,765,100,24,'palace', 'Palace', 20))
     battleSimScreen.addItem(linkButton(860,880,200,100,'rollButton','diceScreen',screenManager, tString = 'Roll'))
 

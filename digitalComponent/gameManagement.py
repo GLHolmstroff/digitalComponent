@@ -5,6 +5,7 @@ class Game():
         self.currentPlayerIndex  = None
         self.board = None
         self.board = Board()
+        self.setting = dict(lastManStanding = False, threeCastles = False, firstKnokOut = False)
     
     def nextPlayer(self):
         print('next')
@@ -37,3 +38,13 @@ class Player():
         self.desert = 0
         self.swamp = 0
         # game.players.append(self)
+
+class Battle():
+    def __init__(self,attacker,defender,troopsAttacker,troopsDefender,wall,tower,castle,palace):
+        self.attacker = attacker
+        self.defender = defender
+        self.troopsAttacker = troopsAttacker
+        self.troopsDefender = troopsDefender
+        self.buildings = dict(wall = wall, tower = tower, castle = castle, palace = palace)
+    
+        
