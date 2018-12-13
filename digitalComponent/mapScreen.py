@@ -1,6 +1,6 @@
 from items import *
+from collections import OrderedDict
 
-global pickedColour
 pickedColour = '#4A8EA5'
 
 class Tile(item):
@@ -27,11 +27,12 @@ class Tile(item):
         shape(h)
 
 class clickableTile(Tile, clickable):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,startup=True, **kwargs):
         super(clickableTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil, **kwargs)
-    
+        self.startup = startup
     def onClick(self):
-        self.colour = pickedColour
+        if self.startup:
+            self.colour = pickedColour
     
     def onHover(self):
         pass
@@ -90,17 +91,12 @@ class gameMap(item):
         self.tiles = list()
         self.rows = rows
         self.columns = rows
-        self.waterFill()
-        
-        
-    def waterFill(self):
-        self.tiles = list()
         for a in range(self.columns):
             self.tiles.append(list())
-        for a in range (self.columns):
             for b in range (self.rows):
                 self.tiles[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
         self.displayPrep()
+        
         
     # Moves hexagons into place to display as grid
     def displayPrep(self):
@@ -125,19 +121,30 @@ class gameMap(item):
             self.tiles[x-1][y-1] = tile
         self.displayPrep()
         
-    def incSize(self, x):
-        self.rows += x
-        self.columns += x
-        self.waterFill()
+    def incSize(self):
+        self.tiles.insert(0,list())
+        for tile in range(self.columns):
+            self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles.insert(len(self.tiles),list())
+        for tile in range(self.columns):
+            self.tiles[len(self.tiles)-1].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        for tilelist in self.tiles:
+            tilelist.insert(0,clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+            tilelist.insert((len(self.tiles)-1),clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.rows += 2
+        self.columns += 2
+        self.displayPrep()
     
-    def decSize(self, x):
-        self.rows = self.rows - x
-        if self.rows < 1:
-            self.rows = 1
-        self.columns = self.columns - x
-        if self.columns < 1:
-            self.columns = 1
-        self.waterFill()
+    def decSize(self):
+        if self.rows > 3 and self.tiles > 3:
+            self.rows = self.rows - 2
+            self.columns = self.columns - 2
+            del(self.tiles[0])
+            del(self.tiles[len(self.tiles)-1])
+            for tilelist in self.tiles:
+                del(tilelist[0])
+                del(tilelist[len(tilelist)-1])
+        self.displayPrep()
         
     
     
@@ -204,6 +211,5 @@ class colourPicker(button):
         self.active = True
         global pickedColour
         pickedColour = self.colour
-        print(self.active)
         
 selected = Mountain(0,0,0,0,'')                   
