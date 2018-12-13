@@ -120,10 +120,10 @@ class Player():
         self._valsObservers.append(callback)
 
 class Battle():
-    def __init__(self,attacker,defender,troopsAttacker,troopsDefender,wall,tower,castle,palace):
-        self.attacker = attacker
-        self.defender = defender
-        self.troopsAttacker = troopsAttacker
-        self.troopsDefender = troopsDefender
-        self.buildings = dict(wall = wall, tower = tower, castle = castle, palace = palace)
+    def __init__(self):
+        self.attacker = None
+        self.defender = None
+        self.troopsAttacker = 0
+        self.troopsDefender = 0
+        self.buildings = dict(wall = False, tower = False, castle = False, palace = False)
    

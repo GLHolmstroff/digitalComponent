@@ -8,7 +8,7 @@ from winScreen import *
 
 def setup():
     fullScreen()
-    print(width,height)
+    # print(width,height)
     frameRate(35)
 
     # noStroke()
