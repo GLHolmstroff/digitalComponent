@@ -139,14 +139,14 @@ def setUpGame():
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 330, 80, 40, 'addForestButton', game.currentPlayer.forest,1,(game.currentPlayer,game), 'setforest'))
+    shopScreen.addItem(varFunButton(width - 90, 330, 80, 40, 'addForestButton', game.currentPlayer.setforest,1,(game.currentPlayer,game), 'setforest'))
     shopScreen.addItem(textBox(width - 90, 330, 80, 40, 'addForestButtonText', 'add', 20))
 
     t = textBox(width - 380, 430, 280, 40, 'highlandsTextbox', 'Highlands', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 430, 80, 40, 'addHighlandsButton', game.currentPlayer.highland,1,(game.currentPlayer,game), 'sethighland'))
+    shopScreen.addItem(varFunButton(width - 90, 430, 80, 40, 'addHighlandsButton', game.currentPlayer.sethighland,1,(game.currentPlayer,game), 'sethighland'))
     shopScreen.addItem(textBox(width - 90, 430, 80, 40, 'addHighlandsButtonText', 'add', 20))
 
 

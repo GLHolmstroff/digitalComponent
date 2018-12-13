@@ -105,7 +105,7 @@ class Player():
             callback(self)
             
     def setforest(self,value):
-        self.desert += value
+        self.forest += value
         for callback in self._valsObservers:
             callback(self)
             
