@@ -10,6 +10,7 @@ def setup():
     fullScreen()
     print(width,height)
     frameRate(35)
+
     # noStroke()
     textAlign(CENTER,CENTER)
     setUpGame()

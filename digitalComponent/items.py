@@ -191,15 +191,16 @@ class dropDown(clickable):
     
         
 class checkbox(clickable):
-    def __init__(self,x,y,w,h,name, defaultValue, targetVar, **kwargs):
-       
-        self.value = defaultValue
-        self.targetVar = targetVar 
+    def __init__(self,x,y,w,h,name, defaultValue,location,item, **kwargs):
+        self.location = location
+        self.item = item
+        self.value = defaultValue 
         super(checkbox, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
         self.value = not(self.value)
-        self.targetVar = not(self.targetVar)
+        self.location[self.item] = self.value
+
         
         
     def display(self):
@@ -234,6 +235,13 @@ class variableText(textBox):
         textSize(self.tSize)
         text(str(self.value), self.x,self.y,self.w,self.h)
         
+
+class setupDropDown(dropDown):
+    def __init__(self,x,y,w,h,name,title,*options,**kwargs):
+        super(setupDropDown, self).__init__(self,x,y,w,h,name,title,*options,**kwargs)
+    
+    def outFun(self):
+        print('you mum')
         
 class varBox(textBox):
     def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):

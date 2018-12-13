@@ -6,6 +6,8 @@ class Game():
         self.currentPlayerIndex  = None
         self.board = None
         self.board = Board()
+        self.setting = dict(lastManStanding = False, threeCastles = False, firstKnokOut = False)
+
         
     def setPlayer(self,value):
         self._currentPlayer = value
@@ -116,3 +118,12 @@ class Player():
             
     def bindTo(self,callback):
         self._valsObservers.append(callback)
+
+class Battle():
+    def __init__(self,attacker,defender,troopsAttacker,troopsDefender,wall,tower,castle,palace):
+        self.attacker = attacker
+        self.defender = defender
+        self.troopsAttacker = troopsAttacker
+        self.troopsDefender = troopsDefender
+        self.buildings = dict(wall = wall, tower = tower, castle = castle, palace = palace)
+   
