@@ -241,7 +241,7 @@ class setupDropDown(dropDown):
         super(setupDropDown, self).__init__(self,x,y,w,h,name,title,*options,**kwargs)
     
     def outFun(self):
-        print('you mum')
+        pass
         
 class varBox(textBox):
     def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):
@@ -257,6 +257,6 @@ class varBox(textBox):
         
     def update(self,value):
         self.tString = getattr(value, self.attrname)
-        print (self.tString)
+        
     
         
