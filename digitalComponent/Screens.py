@@ -5,8 +5,10 @@ from dice import *
 from winScreen import *
 
 
+
 def setUpGame():
     game = Game()
+    battle = Battle()
     #I make 4 players just for testing
     player1 = Player('player 1',color(60))
     player2 = Player('player 2',color(60))
@@ -71,9 +73,9 @@ def setUpGame():
     winScreen.addItem(textBox(350,250,500,100,'textBox1', 'last one standing', 30))
     winScreen.addItem(textBox(700,250,500,100,'textBox1', '3 castles', 30))
     winScreen.addItem(textBox(1200,250,500,100,'textBox1', 'fist conqueror wins', 30))
-    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,laststanding))
-    winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,"3caslte"))
-    winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,"1st"))
+    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,game.setting,'lastOneStanding'))
+    winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,game.setting,'threeCastles'))
+    winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,game.setting,'firstKnockOut'))
     winScreen.addItem(linkButton(10,10,100,100,'linkButton1','testScreen',screenManager, tString='Go to Map'))
     winScreen.addItem(linkButton(10,120,100,100,'linkButton2','battleSim',screenManager, tString='Go to Battle'))
     winScreen.addItem(textBox(250,400,3000,1000,'`textBox1', 'TEST', 30))
@@ -139,14 +141,14 @@ def setUpGame():
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 330, 80, 40, 'addForestButton', game.currentPlayer.forest,1,(game.currentPlayer,game), 'setforest'))
+    shopScreen.addItem(varFunButton(width - 90, 330, 80, 40, 'addForestButton', game.currentPlayer.setforest,1,(game.currentPlayer,game), 'setforest'))
     shopScreen.addItem(textBox(width - 90, 330, 80, 40, 'addForestButtonText', 'add', 20))
 
     t = textBox(width - 380, 430, 280, 40, 'highlandsTextbox', 'Highlands', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 430, 80, 40, 'addHighlandsButton', game.currentPlayer.highland,1,(game.currentPlayer,game), 'sethighland'))
+    shopScreen.addItem(varFunButton(width - 90, 430, 80, 40, 'addHighlandsButton', game.currentPlayer.sethighland,1,(game.currentPlayer,game), 'sethighland'))
     shopScreen.addItem(textBox(width - 90, 430, 80, 40, 'addHighlandsButtonText', 'add', 20))
 
 
@@ -248,12 +250,12 @@ def setUpGame():
     battleSimScreen.addItem(textInput(150,575,500,50,'defenderInput'))
     battleSimScreen.addItem(textBox(1670,500,100,100,'troops2', 'Troops', 20))
     battleSimScreen.addItem(textInput(1270,575,500,50,'defenderInput'))
-    battleSimScreen.addItem(checkbox(1670,650,20,20,'walls',0,'walls'))
+    battleSimScreen.addItem(checkbox(1670,650,20,20,'walls',0,battle.buildings,'wall'))
     battleSimScreen.addItem(textBox(1680,645,100,24,'walls', 'Walls', 20))
-    battleSimScreen.addItem(checkbox(1670,690,20,20,'tower',0,'tower'))
+    battleSimScreen.addItem(checkbox(1670,690,20,20,'tower',0,battle.buildings,'tower'))
     battleSimScreen.addItem(textBox(1680,685,100,24,'tower', 'Tower', 20))
-    battleSimScreen.addItem(checkbox(1670,730,20,20,'castle',0,'castle'))
+    battleSimScreen.addItem(checkbox(1670,730,20,20,'castle',0,battle.buildings, 'castle'))
     battleSimScreen.addItem(textBox(1680,725,100,24,'castle', 'Castle', 20))
-    battleSimScreen.addItem(checkbox(1670,770,20,20,'palace',0,'palace'))
+    battleSimScreen.addItem(checkbox(1670,770,20,20,'palace',0,battle.buildings, 'palace'))
     battleSimScreen.addItem(textBox(1680,765,100,24,'palace', 'Palace', 20))
     battleSimScreen.addItem(linkButton(860,880,200,100,'rollButton','diceScreen',screenManager, tString = 'Roll'))

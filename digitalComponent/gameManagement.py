@@ -6,6 +6,8 @@ class Game():
         self.currentPlayerIndex  = None
         self.board = None
         self.board = Board()
+        self.setting = dict(lastManStanding = False, threeCastles = False, firstKnokOut = False)
+
         
     def setPlayer(self,value):
         self._currentPlayer = value
@@ -105,7 +107,7 @@ class Player():
             callback(self)
             
     def setforest(self,value):
-        self.desert += value
+        self.forest += value
         for callback in self._valsObservers:
             callback(self)
             
@@ -116,3 +118,12 @@ class Player():
             
     def bindTo(self,callback):
         self._valsObservers.append(callback)
+
+class Battle():
+    def __init__(self):
+        self.attacker = None
+        self.defender = None
+        self.troopsAttacker = 0
+        self.troopsDefender = 0
+        self.buildings = dict(wall = False, tower = False, castle = False, palace = False)
+   
