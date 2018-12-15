@@ -22,12 +22,13 @@ def setUpGame():
     game.currentPlayerIndex = 0
     
     map1 = clickableMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map1', 5)
+    map2 = map1.toMap()
     typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
-    testScreen.addItem(linkButton(10,10,100,100,'linkButton1','winScreen',screenManager, tString = 'Go to winScreen'))
-    testScreen.addItem(linkButton(10,120,100,100,'mapToShop','shopScreen',screenManager, tString = 'Go to Shop'))
-    testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Map', 50))
+    
+    testScreen.addItem(linkButton(10,500,100,100,'mapToShop','shopScreen',screenManager, tString = 'Save Map and start game'))
+    testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Create your map', 50))
     testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',map1.incSize,tString='+'))
     testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',map1.decSize,tString='-'))
     testScreen.addItem(map1)
@@ -37,7 +38,15 @@ def setUpGame():
     testScreen.addItem(colourPicker(1600,500,100,100,'mountainPicker','#F0E5B4'))
     testScreen.addItem(colourPicker(1300,700,100,100,'swampPicker','#3D342D'))
     testScreen.addItem(colourPicker(1600,700,100,100,'waterPicker','#4A8EA5'))
-
+    
+    mapScreen = Screen('mapScreen')
+    screenManager.addScreen(mapScreen)
+    
+    mapScreen.addItem(map2)
+    mapScreen.addItem(linkButton(10,10,100,100,'linkButton1','winScreen',screenManager, tString = 'Go to winScreen'))
+    mapScreen.addItem(linkButton(10,120,100,100,'linkButton1','shopScreen',screenManager, tString = 'Go to Shop'))
+    mapScreen.addItem(linkButton(10,230,100,100,'linkButton1','battleSim',screenManager, tString = 'Go to battle'))
+    
     testScreen2 = Screen('testScreen2')
     screenManager.addScreen(testScreen2)
     testScreen2.addItem(linkButton(10,10,100,100,'linkButton2','testScreen',screenManager, tString = 'Go to Screen 1'))
@@ -76,7 +85,7 @@ def setUpGame():
     winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,game.setting,'lastOneStanding'))
     winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,game.setting,'threeCastles'))
     winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,game.setting,'firstKnockOut'))
-    winScreen.addItem(linkButton(10,10,100,100,'linkButton1','testScreen',screenManager, tString='Go to Map'))
+    winScreen.addItem(linkButton(10,10,100,100,'linkButton1','mapScreen',screenManager, tString='Go to Map'))
     winScreen.addItem(linkButton(10,120,100,100,'linkButton2','battleSim',screenManager, tString='Go to Battle'))
     winScreen.addItem(textBox(250,400,3000,1000,'`textBox1', 'TEST', 30))
     winScreen.addItem(linkButton(250,400,120,50,'testWin','winScreen2',screenManager))
@@ -99,7 +108,7 @@ def setUpGame():
 
     settingScreen.addItem(textBox(width/2 - 150,height/2,200,50,'amountOfPlayersText','Amount of players:',20, tColor = '#ffffff'))
     settingScreen.addItem(dropDown(width/2+50,height/2,100,50,'dropdown1','1', '2','3','4'))
-    settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','shopScreen',screenManager,tString = 'Start'))
+    settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','testScreen',screenManager,tString = 'Start'))
 
     
 
@@ -234,11 +243,11 @@ def setUpGame():
     shopScreen.addItem(varBox(550,340,100,30,'varText1',(game,)+tuple(game.players),game.currentPlayer.towers, 'towers', tSize = 20, tColor = color(255)))
 
     shopScreen.addItem(funButton(400, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
-    shopScreen.addItem(linkButton(400, height - 200, 200,50,'mapButton','testScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
+    shopScreen.addItem(linkButton(400, height - 200, 200,50,'mapButton','mapScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
     
     battleSimScreen = Screen('battleSim')
     screenManager.addScreen(battleSimScreen)
-    testScreen.addItem(linkButton(10,230,100,100,'battleSimScreen','battleSim',screenManager,tString = 'Battle Simulator'))
+    # testScreen.addItem(linkButton(10,230,100,100,'battleSimScreen','battleSim',screenManager,tString = 'Battle Simulator'))
     battleSimScreen.addItem(linkButton(10,10,100,100,'linkButton2','testScreen',screenManager, tString = 'Go to Map'))
     # battleSimScreen.addItem(linkButton(10,120,100,100,'diceScreen','diceScreen',screenManager, tString = 'Go to Dice'))
     battleSimScreen.addItem(textBox(760,10,400,200,'title', 'Battle Simulator', 60))

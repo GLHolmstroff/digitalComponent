@@ -32,7 +32,49 @@ class clickableTile(Tile, clickable):
         self.startup = startup
     def onClick(self):
         if self.startup:
-            self.colour = pickedColour
+            if pickedColour == '#DAA33A':
+                self.colour = pickedColour
+                self.gold = 2
+                self.building = 2
+                self.road = True
+                self.civ = True
+                self.mil = False
+            elif pickedColour == '#8CA74D':
+                self.colour = pickedColour
+                self.gold = 2
+                self.building = 1
+                self.road = True
+                self.civ = True
+                self.mil = True
+            elif pickedColour == '#C02823':
+                self.colour = pickedColour
+                self.gold = 2
+                self.building = 2
+                self.road = True
+                self.civ = True
+                self.mil = True
+            elif pickedColour == '#F0E5B4':
+                self.colour = pickedColour
+                self.gold = 3
+                self.building = 1
+                self.road = True
+                self.civ = False
+                self.mil = True
+            elif pickedColour == '#3D342D':
+                self.colour = pickedColour
+                self.gold = 1
+                self.building = 2
+                self.road = False
+                self.civ = True
+                self.mil = True
+            elif pickedColour == '#4A8EA5':
+                self.colour = pickedColour
+                self.gold = 0
+                self.building = 0
+                self.road = False
+                self.civ = False
+                self.mil = False
+            
     
     def onHover(self):
         pass
@@ -122,18 +164,19 @@ class gameMap(item):
         self.displayPrep()
         
     def incSize(self):
-        self.tiles.insert(0,list())
-        for tile in range(self.columns):
-            self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
-        self.tiles.insert(len(self.tiles),list())
-        for tile in range(self.columns):
-            self.tiles[len(self.tiles)-1].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
-        for tilelist in self.tiles:
-            tilelist.insert(0,clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
-            tilelist.insert((len(self.tiles)-1),clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
-        self.rows += 2
-        self.columns += 2
-        self.displayPrep()
+        if self.rows < 9 and self.columns < 9:    
+            self.tiles.insert(0,list())
+            for tile in range(self.columns):
+                self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+            self.tiles.insert(len(self.tiles),list())
+            for tile in range(self.columns):
+                self.tiles[len(self.tiles)-1].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+            for tilelist in self.tiles:
+                tilelist.insert(0,clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+                tilelist.insert((len(self.tiles)-1),clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+            self.rows += 2
+            self.columns += 2
+            self.displayPrep()
     
     def decSize(self):
         if self.rows > 3 and self.tiles > 3:
@@ -163,6 +206,13 @@ class clickableMap(gameMap,clickable):
     
     def onHover(self):
         pass
+        
+    def toMap(self):
+        outmap = gameMap(self.x,self.y,self.w,self.h,self.name,self.rows)
+        for x in range(len(self.tiles)):
+            for y in range(self.rows):
+                outmap.tiles[x][y] = self.tiles[x][y] 
+        return outmap
         
 class colourPicker(button):
     def __init__(self,x,y,w,h,name,colour, **kwargs):
