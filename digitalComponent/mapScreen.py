@@ -1,7 +1,18 @@
 from items import *
+from screenManagement import *
 from collections import OrderedDict
+import copy
 
 pickedColour = '#4A8EA5'
+palace = loadImage('data\palace.png')
+barracks = loadImage('data\palace')
+farm = loadImage('data\palace')
+village = loadImage('data\palace')
+farm = loadImage('data\palace')
+walls = loadImage('data\palace')
+tower = loadImage('data\palace')
+castle = loadImage('data\palace')
+
 
 class Tile(item):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
@@ -12,6 +23,8 @@ class Tile(item):
         self.road = road
         self.civ = civ
         self.mil = mil
+        self.currentBuildings = {'palace':0,'farm':0,'village':0,'barracks':0,'walls':0,'tower':0,'castle':0}
+        self.hasRoad = False
         
     def display(self):
         fill(self.colour)
@@ -25,6 +38,37 @@ class Tile(item):
         h.vertex(self.x - 0.25*self.w,self.y+0.5*self.h)
         h.endShape(CLOSE)
         shape(h)
+        ellipse(self.x + 0.05*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
+        fill(0)
+        textSize(0.1*self.w)
+        text(str(self.gold),self.x -0.05*self.w,self.y+0.1*self.h,0.2*self.w,0.2*self.h)
+        if self.road:
+            if self.hasRoad:
+                fill(50)    
+            rect(self.x + 0.1*self.w,self.y + 0.55*self.h,0.2*self.w,0.2*self.h)
+            fill(0)
+        self.tempdict = copy.deepcopy(self.currentBuildings)
+        if self.building > 0:
+            for building,owner in self.currentBuildings.items():
+                if owner != 0:
+                    # Insert code to load image here
+                    stroke(owner.colour)
+                    rect(self.x + 0.34*self.w,self.y + 0.54*self.h,0.22*self.w,0.22*self.h)
+                    stroke(30)
+                    self.tempdict.pop(building)
+                    break;
+                else:
+                    rect(self.x + 0.35*self.w,self.y + 0.55*self.h,0.2*self.w,0.2*self.h)
+            if self.building > 1:
+                for building,owner in self.tempdict.items():
+                        if owner != 0:
+                            #insert code to load image here
+                            stroke(owner.colour)
+                            rect(self.x + 0.34*self.w,self.y + 0.19*self.h,0.22*self.w,0.22*self.h)
+                            stroke(30)
+                            break;
+                        else:
+                            rect(self.x + 0.35*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
 
 class clickableTile(Tile, clickable):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
@@ -84,7 +128,10 @@ class setupTile(clickableTile):
             self.civ = False
             self.mil = False
     
-
+class shopTile(clickableTile):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
+        super(shopTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,**kwargs)
+        
             
 class Desert(Tile):
     def __init__(self,x,y,w,h,name):
@@ -167,7 +214,7 @@ class gameMap(item):
         for a in range(self.columns):
             self.tiles.append(list())
             for b in range (self.rows):
-                self.tiles[a].append(Water(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+                self.tiles[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
         self.displayPrep()
         
         
@@ -219,21 +266,21 @@ class clickableMap(gameMap,clickable):
         pass
         
     def toDisplayMap(self):
-        out = list(self.tiles)
-        # for x in range(len(self.tiles)):
-            # for y in range(len(self.tiles[x])):
-            #     if self.tiles[x][y].colour == '#DAA33A':
-            #         out[x][y] = (Desert(self.x,self.y,self.w,self.h,''))
-            #     elif self.tiles[x][y].colour == '#8CA74D':
-            #         out[x][y] = (Forest(self.x,self.y,self.w,self.h,''))
-            #     elif self.tiles[x][y].colour == '#C02823':
-            #         out[x][y] = (Highland(self.x,self.y,self.w,self.h,''))
-            #     elif self.tiles[x][y].colour == '#F0E5B4':
-            #         out[x][y] = (Mountain(self.x,self.y,self.w,self.h,''))
-            #     elif self.tiles[x][y].colour == '#3D342D':
-            #         out[x][y] = (Swamp(self.x,self.y,self.w,self.h,''))
-            #     else:
-            #         out[x][y] = (Water(self.x,self.y,self.w,self.h,''))
+        out = copy.deepcopy(self.tiles)
+        for x in range(len(self.tiles)):
+            for y in range(len(self.tiles[x])):
+                if self.tiles[x][y].colour == '#DAA33A':
+                    out[x][y] = (Desert(self.x,self.y,self.w,self.h,''))
+                elif self.tiles[x][y].colour == '#8CA74D':
+                    out[x][y] = (Forest(self.x,self.y,self.w,self.h,''))
+                elif self.tiles[x][y].colour == '#C02823':
+                    out[x][y] = (Highland(self.x,self.y,self.w,self.h,''))
+                elif self.tiles[x][y].colour == '#F0E5B4':
+                    out[x][y] = (Mountain(self.x,self.y,self.w,self.h,''))
+                elif self.tiles[x][y].colour == '#3D342D':
+                    out[x][y] = (Swamp(self.x,self.y,self.w,self.h,''))
+                else:
+                    out[x][y] = (Water(self.x,self.y,self.w,self.h,''))
         return out
     
     def bindTo(self,callback):
@@ -272,7 +319,6 @@ class setupMap(clickableMap):
     
     def decSize(self):
         if self.rows > 3 and self.tiles > 3:
-            self.alt = not self.alt
             if self.alt:
                 del(self.tiles[0])
                 for tilelist in self.tiles:
@@ -281,6 +327,7 @@ class setupMap(clickableMap):
                 del(self.tiles[len(self.tiles)-1])
                 for tilelist in self.tiles:
                     del(tilelist[len(tilelist)-1])
+            self.alt = not self.alt
             self.rows -=1
             self.columns -= 1
             self.displayPrep()
@@ -299,6 +346,9 @@ class displayMap(gameMap):
         self.tiles = value.toDisplayMap()
         self.displayPrep()
                 
+class shopMap(clickableMap):
+    def __init__(self,x,y,w,h,name,parents,**kwargs):
+        pass
         
 class colourPicker(button):
     def __init__(self,x,y,w,h,name,colour, **kwargs):

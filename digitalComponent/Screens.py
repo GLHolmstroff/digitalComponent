@@ -10,10 +10,10 @@ def setUpGame():
     game = Game()
     battle = Battle()
     #I make 4 players just for testing
-    player1 = Player('player 1',color(60))
-    player2 = Player('player 2',color(60))
-    player3 = Player('player 3',color(60))
-    player4 = Player('player 4',color(60))
+    player1 = Player('player 1',color(0,0,0))
+    player2 = Player('player 2',color(255,0,0))
+    player3 = Player('player 3',color(0,255,0))
+    player4 = Player('player 4',color(0,0,255))
     game.players.append(player1)
     game.players.append(player2)
     game.players.append(player3)
@@ -21,7 +21,14 @@ def setUpGame():
     game.currentPlayer = player1
     game.currentPlayerIndex = 0
     
+    global map1
+    global map2
+    global map3
+    global map4
     map1 = setupMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'setupMap', 5)
+    map1.tiles[2][2].hasRoad = True
+    map1.tiles[2][3].currentBuildings['palace'] = player3
+    map1.tiles[2][3].currentBuildings['farm'] = player3
     map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(map1,))
     typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
@@ -47,12 +54,6 @@ def setUpGame():
     mapScreen.addItem(linkButton(10,120,100,100,'linkButton1','shopScreen',screenManager, tString = 'Go to Shop'))
     mapScreen.addItem(linkButton(10,230,100,100,'linkButton1','battleSim',screenManager, tString = 'Go to battle'))
     
-    testScreen2 = Screen('testScreen2')
-    screenManager.addScreen(testScreen2)
-    testScreen2.addItem(linkButton(10,10,100,100,'linkButton2','testScreen',screenManager, tString = 'Go to Screen 1'))
-    testScreen2.addItem(textBox(300,300,1000,1000,'textBox2', 'Screen 2', 100))
-    testScreen2.addItem(typer)
-    testScreen2.addItem(dropDown(500,500,500,50,'dropdown1','This is a dropdown menu', 'this is option 1', 'this is option 2'))
     dice1 = dice(200,500,100,100,'dice1',1)
     dice2 = dice(300,500,100,100,'dice2',2)
     dice3 = dice(400,500,100,100,'dice3',3)
@@ -67,14 +68,11 @@ def setUpGame():
     dice12 = dice(700,300,100,100,'dice12',6)
     diceGroup1 = diceGroup(200,500,600,100,'diceGroup1',dice1,dice2,dice3,dice4,dice5,dice6)
     diceGroup2 = diceGroup(200,300,600,100,'diceGroup2',dice7,dice8,dice9,dice10,dice11,dice12)
-    testScreen2.addItem(diceGroup1)
-    testScreen2.addItem(diceGroup2)
     diceScreen = Screen('diceScreen')
     screenManager.addScreen(diceScreen)
     diceScreen.addItem(diceGroup1)
     diceScreen.addItem(diceGroup2)
-    testScreen2.addItem(dropDown(500,500,500,50,'dropdown1','This is a dropdown menu', 'this is option 1', 'this is option 2'))
-
+    
     winScreen = Screen("winScreen")
     screenManager.addScreen(winScreen)
     laststanding = False
