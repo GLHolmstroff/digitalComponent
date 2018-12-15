@@ -138,8 +138,8 @@ class varFunButton(funButton):
         super(varFunButton, self).__init__(x,y,w,h,name,fun,arg)
         self.parents = parents
         self.attrname = attrname
-        for x in range(len(self.parents)):
-            self.parents[x].bindTo(self.update)
+        for x in self.parents:
+            x.bindTo(self.update)
             
     def update(self,value):
         self.fun = getattr(value, self.attrname)
@@ -252,8 +252,8 @@ class varBox(textBox):
         self.var = var
         self.tString = var
         self.attrname = attrname
-        for x in range(len(self.parents)):
-            self.parents[x].bindTo(self.update)
+        for x in self.parents:
+            x.bindTo(self.update)
         
     def update(self,value):
         self.tString = getattr(value, self.attrname)

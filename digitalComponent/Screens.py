@@ -21,13 +21,13 @@ def setUpGame():
     game.currentPlayer = player1
     game.currentPlayerIndex = 0
     
-    map1 = clickableMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map1', 5)
-    map2 = map1.toMap()
+    map1 = setupMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'setupMap', 5)
+    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(map1,))
     typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
     
-    testScreen.addItem(linkButton(10,500,100,100,'mapToShop','shopScreen',screenManager, tString = 'Save Map and start game'))
+    testScreen.addItem(linkButton(10,500,100,100,'Begin game button','shopScreen',screenManager, tString = 'Save Map and start game'))
     testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Create your map', 50))
     testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',map1.incSize,tString='+'))
     testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',map1.decSize,tString='-'))
@@ -129,7 +129,7 @@ def setUpGame():
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 30, 80, 40, 'addSwampButton',game.currentPlayer.setswamp,1,(game.currentPlayer,game),'setswamp'))
+    shopScreen.addItem(varFunButton(width - 90, 30, 80, 40, 'addSwampButton',game.currentPlayer.setswamp,1,(game,),'setswamp'))
     shopScreen.addItem(textBox(width - 90, 30, 80, 40, 'addSwampButtonText', 'add', 20))
 
     t = textBox(width - 380, 130, 280, 40, 'desertTextbox', 'Desert', 20)
