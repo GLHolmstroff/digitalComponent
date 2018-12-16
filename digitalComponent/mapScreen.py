@@ -4,18 +4,12 @@ from collections import OrderedDict
 import copy
 
 pickedColour = '#4A8EA5'
-palace = loadImage('data\palace.png')
-barracks = loadImage('data\palace')
-farm = loadImage('data\palace')
-village = loadImage('data\palace')
-farm = loadImage('data\palace')
-walls = loadImage('data\palace')
-tower = loadImage('data\palace')
-castle = loadImage('data\palace')
+pickedBuilding = None
+
 
 
 class Tile(item):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
         super(Tile, self).__init__(x,y,w,h,name, **kwargs)
         self.gold = gold        
         self.colour = colour
@@ -23,10 +17,13 @@ class Tile(item):
         self.road = road
         self.civ = civ
         self.mil = mil
-        self.currentBuildings = {'palace':0,'farm':0,'village':0,'barracks':0,'walls':0,'tower':0,'castle':0}
-        self.hasRoad = False
+        self._hasRoad = hasRoad
+        self._building1 = building1
+        self._building2 = building2
+        self.currentBuildings = 0
         
     def display(self):
+        #Draw hexagon
         fill(self.colour)
         h = createShape()
         h.beginShape()
@@ -38,41 +35,56 @@ class Tile(item):
         h.vertex(self.x - 0.25*self.w,self.y+0.5*self.h)
         h.endShape(CLOSE)
         shape(h)
+        #Draw gold indicator
         ellipse(self.x + 0.05*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
         fill(0)
         textSize(0.1*self.w)
         text(str(self.gold),self.x -0.05*self.w,self.y+0.1*self.h,0.2*self.w,0.2*self.h)
+        #Draw road slot if present
         if self.road:
-            if self.hasRoad:
+            if self._hasRoad:
                 fill(50)    
             rect(self.x + 0.1*self.w,self.y + 0.55*self.h,0.2*self.w,0.2*self.h)
             fill(0)
-        self.tempdict = copy.deepcopy(self.currentBuildings)
+        #Draw building slots if present
         if self.building > 0:
-            for building,owner in self.currentBuildings.items():
-                if owner != 0:
+                if self._building1 is not None:
                     # Insert code to load image here
-                    stroke(owner.colour)
+                    stroke(self._building1.owner.colour)
                     rect(self.x + 0.34*self.w,self.y + 0.54*self.h,0.22*self.w,0.22*self.h)
                     stroke(30)
-                    self.tempdict.pop(building)
-                    break;
                 else:
                     rect(self.x + 0.35*self.w,self.y + 0.55*self.h,0.2*self.w,0.2*self.h)
-            if self.building > 1:
-                for building,owner in self.tempdict.items():
-                        if owner != 0:
-                            #insert code to load image here
-                            stroke(owner.colour)
-                            rect(self.x + 0.34*self.w,self.y + 0.19*self.h,0.22*self.w,0.22*self.h)
-                            stroke(30)
-                            break;
-                        else:
-                            rect(self.x + 0.35*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
+        if self.building > 1:
+                if self._building2 is not None:
+                    #insert code to load image here
+                    stroke(self._building2.owner.colour)
+                    rect(self.x + 0.34*self.w,self.y + 0.19*self.h,0.22*self.w,0.22*self.h)
+                    stroke(30)
+                else:
+                    rect(self.x + 0.35*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
+
+    def addRoad(self):
+        if self.road:
+            self._hasRoad = True
+    
+    def remRoad(self):
+        self._hasRoad = False
+        
+    def addBuilding(self,building):
+        if self.currentBuildings < self.building:
+            if self.currentBuildings == 1 and building.owner == self._building1.owner:
+                self._building2 = building
+                self.currentBuildings +=1
+            elif self._building1 is None:
+                self._building1 = building
+                self.currentBuildings +=1
+            
+            
 
 class clickableTile(Tile, clickable):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
-        super(clickableTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil, **kwargs)
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
+        super(clickableTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2, **kwargs)
         
     def onClick(self):
         pass    
@@ -80,9 +92,15 @@ class clickableTile(Tile, clickable):
     def onHover(self):
         pass
 
+    def toTile(self):
+        return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2))
+    
+    def toShopTile(self,targetBuilding,dest,manager):
+        return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager))
+    
 class setupTile(clickableTile):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
-        super(setupTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,**kwargs)
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
+        super(setupTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
     
     def onClick(self):
         if pickedColour == '#DAA33A':
@@ -129,8 +147,37 @@ class setupTile(clickableTile):
             self.mil = False
     
 class shopTile(clickableTile):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False, **kwargs):
-        super(shopTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,**kwargs)
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,targetBuilding=None,dest=None,manager=None, **kwargs):
+        super(shopTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
+        self.targetBuilding = targetBuilding
+        self.dest = dest
+        self.manager = manager
+        
+    def onClick(self):
+        if self.targetBuilding is not None:
+             if self.currentBuildings < self.building:
+                if self.currentBuildings == 1 and self.targetBuilding.owner == self._building1.owner:
+                    self._building2 = self.targetBuilding.copy()
+                    self.currentBuildings +=1
+                elif self._building1 is None:
+                    self._building1 = self.targetBuilding.copy()
+                    self.currentBuildings +=1
+                    #Determine which tileatrribute to increase in owner, only when building first building on tile
+                    out = ''
+                    if self.colour == '#DAA33A':
+                        out = 'setdesert'
+                    elif self.colour == '#8CA74D':
+                        out = 'setforest'
+                    elif self.colour == '#C02823':
+                        out = 'sethighland'
+                    elif self.colour == '#F0E5B4':
+                        out = 'setmountain'
+                    elif self.colour == '#3D342D':
+                        out = 'setswamp'
+                    #call appropriate setter of the new building owner to increase by one            
+                    getattr(self.targetBuilding.owner,out)(1)
+                self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+                    
         
             
 class Desert(Tile):
@@ -205,6 +252,10 @@ class setupWater(setupTile):
     def __init__(self,x,y,w,h,name):
         super(setupWater, self).__init__(x,y,w,h,name,0,'#4A8EA5',0,False,False,False)
         
+class shopWater(shopTile):
+    def __init__(self,x,y,w,h,name):
+        super(shopWater, self).__init__(x,y,w,h,name,0,'#4A8EA5',0,False,False,False)
+        
 class gameMap(item):
     def __init__(self, x,y,w,h,name,rows, **kwargs):
         super(gameMap, self).__init__(x,y,w,h,name)
@@ -266,21 +317,25 @@ class clickableMap(gameMap,clickable):
         pass
         
     def toDisplayMap(self):
-        out = copy.deepcopy(self.tiles)
+        out = list()
+        for a in range(self.columns):
+            out.append(list())
+            for b in range (self.rows):
+                out[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
         for x in range(len(self.tiles)):
             for y in range(len(self.tiles[x])):
-                if self.tiles[x][y].colour == '#DAA33A':
-                    out[x][y] = (Desert(self.x,self.y,self.w,self.h,''))
-                elif self.tiles[x][y].colour == '#8CA74D':
-                    out[x][y] = (Forest(self.x,self.y,self.w,self.h,''))
-                elif self.tiles[x][y].colour == '#C02823':
-                    out[x][y] = (Highland(self.x,self.y,self.w,self.h,''))
-                elif self.tiles[x][y].colour == '#F0E5B4':
-                    out[x][y] = (Mountain(self.x,self.y,self.w,self.h,''))
-                elif self.tiles[x][y].colour == '#3D342D':
-                    out[x][y] = (Swamp(self.x,self.y,self.w,self.h,''))
-                else:
-                    out[x][y] = (Water(self.x,self.y,self.w,self.h,''))
+                out[x][y] = self.tiles[x][y].toTile()
+        return out
+    
+    def toShopMap(self,targetBuilding,dest,manager):
+        out = list()
+        for a in range(self.columns):
+            out.append(list())
+            for b in range (self.rows):
+                out[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        for x in range(len(self.tiles)):
+            for y in range(len(self.tiles[x])):
+                out[x][y] = self.tiles[x][y].toShopTile(targetBuilding,dest,manager)
         return out
     
     def bindTo(self,callback):
@@ -316,6 +371,8 @@ class setupMap(clickableMap):
             self.rows += 1
             self.columns += 1
             self.displayPrep()
+            for callback in self._observers:
+                            callback(self)
     
     def decSize(self):
         if self.rows > 3 and self.tiles > 3:
@@ -331,6 +388,8 @@ class setupMap(clickableMap):
             self.rows -=1
             self.columns -= 1
             self.displayPrep()
+            for callback in self._observers:
+                            callback(self)
         
         
 class displayMap(gameMap):
@@ -347,8 +406,33 @@ class displayMap(gameMap):
         self.displayPrep()
                 
 class shopMap(clickableMap):
-    def __init__(self,x,y,w,h,name,parents,**kwargs):
-        pass
+    def __init__(self,x,y,w,h,name,mapParents,targetBuilding,tbParents,dest,manager,**kwargs):
+        super(shopMap, self).__init__(x,y,w,h,name,7)
+        self.tiles = list()
+        self.targetBuilding = targetBuilding
+        for a in range(self.columns):
+            self.tiles.append(list())
+            for b in range (self.rows):
+                self.tiles[a].append(shopWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.displayPrep()
+        self.mapParents = mapParents
+        for x in self.mapParents:
+            x.bindTo(self.mapUpdate)
+        self.tbParents = tbParents
+        for x in self.tbParents:
+            x.bindTo(self.tbUpdate)
+        self.dest = dest
+        self.manager = manager
+            
+    def mapUpdate(self, value):
+        self.rows = value.rows
+        self.columns = value.columns
+        self.tiles = value.toShopMap(self.targetBuilding,self.dest,self.manager)
+        self.displayPrep()
+        
+    def tbUpdate(self,value):
+        self.targetBuilding.setOwner(value) 
+        
         
 class colourPicker(button):
     def __init__(self,x,y,w,h,name,colour, **kwargs):

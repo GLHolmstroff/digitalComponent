@@ -1,3 +1,4 @@
+
 class Game:
     def __init__(self):
         self.players = []
@@ -126,4 +127,3 @@ class Battle():
         self.troopsAttacker = 0
         self.troopsDefender = 0
         self.buildings = dict(wall = False, tower = False, castle = False, palace = False)
-   

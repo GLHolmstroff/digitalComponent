@@ -1,6 +1,5 @@
 from screenManagement import *
 
-
 class item(object):
     def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
         self.name = name
@@ -108,6 +107,16 @@ class linkButton(button):
     def onClick(self):
         self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
+class varLinkButton(linkButton):
+    def __init__(self,x,y,w,h,name,destination,manager,parents,**kwargs):
+        super(varLinkButton, self).__init__(x,y,w,h,name,destination,manager,**kwargs)
+        self.parents = parents
+        for x in self.parents:
+            x.bindTo(self.update)
+            
+    def update(self,value):
+        self.dest = value
+        
 class valButton(button):
     def __init__(self,x,y,w,h,name, value, location, item, *targetVars, **kwargs):
         self.value = value
@@ -144,6 +153,25 @@ class varFunButton(funButton):
     def update(self,value):
         self.fun = getattr(value, self.attrname)
         
+class varLinkFunButton(linkButton):
+    def __init__(self,x,y,w,h,name,parents,dest,manager,fun,arg = None,**kwargs):
+        super(varLinkFunButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
+        self.fun = fun
+        self.arg = arg
+        self.parents = parents
+        for x in self.parents:
+            x.bindTo(self.update)
+        
+    def onClick(self):
+        if self.arg is not None:
+            self.fun(self.arg)
+        else:
+            self.fun()
+        self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+        
+    def update(self,value):
+        self.arg = value
+    
         
 class dropDown(clickable):
     def __init__(self,x,y,w,h,name,title,*options,**kwargs):
@@ -258,5 +286,55 @@ class varBox(textBox):
     def update(self,value):
         self.tString = getattr(value, self.attrname)
         
+class Building(item):
+    def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
+        super(Building, self).__init__(x,y,w,h,name)
+        self.owner = owner
+        self.cost = cost
+        self.mil = mil
+        self.health = health
+        self.vil = vil
+        self.bar = bar
+    #     self.img = loadImage(kwargs.get('imgUrl'))
+        
+    # def display(self):
+    #     image(self.img,self.x,self.y,self.w,self.h)
     
+    def setOwner(self,value):
+        self.owner = value
+      
+    # Used to place an actual building into the map instead of a reference to the targetbuilding
+    def copy(self):
+        return(Building(self.x,self.y,self.w,self.h,self.name,self.owner,self.cost,self.mil,self.health))
+        
+class Palace(Building):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
+        super(Palace, self).__init__(x,y,w,h,name,owner,0,False,20,imgUrl='data\palace.png')
+
+class Farm(Building):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
+        super(Farm, self).__init__(x,y,w,h,name,owner,4,False,0)
+        
+class Village(Building):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
+        super(Village, self).__init__(x,y,w,h,name,owner,5,False,0,vil = True,**kwargs)
+        
+        
+class Barracks(Building):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
+        super(Barracks, self).__init__(x,y,w,h,name,owner,5,False,0,bar = True,**kwargs)
+
+
+class Walls(Building):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
+        super(Walls, self).__init__(x,y,w,h,name,owner,10,True,10,**kwargs)
+
+class Tower(Building):
+    def __init__(self,x,y,w,h,owner,**kwargs):
+        super(Tower, self).__init__(x,y,w,h,name,owner,15,True,15,**kwargs)
+
+class Castle(Building):
+    def __init__(self,x,y,w,h,owner,**kwargs):
+        super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
+
         

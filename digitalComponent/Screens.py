@@ -10,7 +10,7 @@ def setUpGame():
     game = Game()
     battle = Battle()
     #I make 4 players just for testing
-    player1 = Player('player 1',color(0,0,0))
+    player1 = Player('player 1',color(255,255,255))
     player2 = Player('player 2',color(255,0,0))
     player3 = Player('player 3',color(0,255,0))
     player4 = Player('player 4',color(0,0,255))
@@ -20,16 +20,14 @@ def setUpGame():
     game.players.append(player4)
     game.currentPlayer = player1
     game.currentPlayerIndex = 0
-    
     global map1
     global map2
     global map3
     global map4
+    farm1 = Farm(0,0,0,0,'',game.currentPlayer)
     map1 = setupMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'setupMap', 5)
-    map1.tiles[2][2].hasRoad = True
-    map1.tiles[2][3].currentBuildings['palace'] = player3
-    map1.tiles[2][3].currentBuildings['farm'] = player3
-    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(map1,))
+    map3 = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopMap',(map1,),farm1,(game,),'shopScreen',screenManager)
+    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(map1,map3))
     typer = textInput(300,100,1000,100,'textIn1')
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
@@ -53,6 +51,13 @@ def setUpGame():
     mapScreen.addItem(linkButton(10,10,100,100,'linkButton1','winScreen',screenManager, tString = 'Go to winScreen'))
     mapScreen.addItem(linkButton(10,120,100,100,'linkButton1','shopScreen',screenManager, tString = 'Go to Shop'))
     mapScreen.addItem(linkButton(10,230,100,100,'linkButton1','battleSim',screenManager, tString = 'Go to battle'))
+    
+    shopMapScreen = Screen('shopMapScreen')
+    screenManager.addScreen(shopMapScreen)
+    
+    shopMapScreen.addItem(map3)
+    shopMapScreen.addItem(linkButton(10,10,100,100,'linkButton1','shopScreen',screenManager, tString = 'Go to Shop'))
+    
     
     dice1 = dice(200,500,100,100,'dice1',1)
     dice2 = dice(300,500,100,100,'dice2',2)
@@ -113,6 +118,9 @@ def setUpGame():
     #a lot of code for the shopScreen
     shopScreen = Screen('shopScreen')
     screenManager.addScreen(shopScreen)
+    
+    shopScreen.addItem(linkButton(10,10,100,100,'linkButton1','shopMapScreen',screenManager, tString = 'Go to ShopMap'))
+    
     sideBar = item(width-400,0,400,height,'sideBar')
     sideBar.backgroundColor = color(30)
     shopScreen.addItem(sideBar)
@@ -245,9 +253,7 @@ def setUpGame():
     
     battleSimScreen = Screen('battleSim')
     screenManager.addScreen(battleSimScreen)
-    # testScreen.addItem(linkButton(10,230,100,100,'battleSimScreen','battleSim',screenManager,tString = 'Battle Simulator'))
-    battleSimScreen.addItem(linkButton(10,10,100,100,'linkButton2','testScreen',screenManager, tString = 'Go to Map'))
-    # battleSimScreen.addItem(linkButton(10,120,100,100,'diceScreen','diceScreen',screenManager, tString = 'Go to Dice'))
+    battleSimScreen.addItem(linkButton(10,10,100,100,'linkButton2','mapScreen',screenManager, tString = 'Go to Map'))
     battleSimScreen.addItem(textBox(760,10,400,200,'title', 'Battle Simulator', 60))
     battleSimScreen.addItem(textBox(150,300,100,100,'attacker', 'Attacker', 20))
     battleSimScreen.addItem(textInput(150,375,500,50,'attackerInput'))
