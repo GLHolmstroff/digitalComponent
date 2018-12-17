@@ -162,7 +162,7 @@ class shopTile(clickableTile):
         if self.targetBuilding is not None:
             if (self.targetBuilding.mil and self.mil) or (self.targetBuilding.civ and self.civ):
                 if self.currentBuildings < self.building:
-                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name:
+                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name and self.targetBuilding.name != self._building1.name:
                             self._building2 = self.targetBuilding.copy()
                             self.currentBuildings +=1
                     elif self._building1 is None:
@@ -194,6 +194,41 @@ class battleTile(clickableTile):
     def onClick(self):
         self.battle.setLocation(self)
         print(self.battle.location)
+        
+    def remove(self,string):
+        if string == 'civ':
+            for x in ['farm','village','barracks']:
+                if self._building2 is not None:
+                    if self._building2.name == x:
+                        self._building2 = None
+                        self.currentBuildings -= 1
+                    if self._building1 is not None:
+                        if self._building1.name == x:
+                            self._building1 = self._building2.copy()
+                            self._building2 = None
+                            self.currentBuildings -= 1
+                elif self._building1 is not None:
+                    if self._building1.name == x:
+                        self._building1 = None
+                        self.currentBuildings -= 1
+                    
+        else:
+            if self._building2 is not None:
+                if self._building2.name == string:
+                    self._building2 = None
+                    self.currentBuildings -= 1
+                if self._building1 is not None:
+                    if self._building1.name == string:
+                        self._building1 = self._building2.copy()
+                        self._building2 = None
+                        self.currentBuildings -= 1
+            elif self._building1 is not None:
+                if self._building1.name == string:
+                    self._building1 = None
+                    self.currentBuildings -= 1
+                
+            
+                
         
 class Desert(Tile):
     def __init__(self,x,y,w,h,name):
@@ -334,7 +369,8 @@ class clickableMap(gameMap,clickable):
     
     def onHover(self):
         pass
-     #Conversion methods for internal updating,    
+        
+    # Conversion methods for internal updating   
     def toDisplayMap(self):
         out = list()
         for a in range(self.columns):

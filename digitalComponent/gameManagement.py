@@ -149,6 +149,20 @@ class Battle(object):
     
     def setLocation(self,loc):
         self.location = loc
+        locBuildings = []
+        if loc._building1 is not None:
+            locBuildings.append(loc._building1.name)
+        if loc._building2 is not None:
+            locBuildings.append(loc._building2.name)
+        for battleBuilding in self.buildings:
+            for tileBuilding in locBuildings:
+                if battleBuilding == tileBuilding:
+                    self.buildings[battleBuilding] = True
+            
+            
+        
+    def setDamtoDef(self,x):
+        self.damToDef = x
     
     def setBuildings(wall=False,tower=False,castle=False,palace=False):
         if wall:
@@ -169,38 +183,37 @@ class Battle(object):
     def defDamage(self):
         self.troopsLostDef = 0
         restDamage = int(self.damToDef)
-
         if self.buildings['wall']:
             if restDamage >= 10:
-                self.location.remove(wall)
+                self.location.remove('wall')
                 self.defLost[wall] = True
                 restDamage -= 10
-        if self.buildings[tower]:
+        if self.buildings['tower' ]:
             if restDamage >= 15:
-                self.location.remove(tower)
-                self.defLost[tower] = True
+                self.location.remove('tower')
+                self.defLost['tower'] = True
                 restDamage -=15
-        if self.buildings[castle]:
+        if self.buildings['castle']:
             if restDamage >= 20:
-                self.location.remove(castle)
-                self.defLost[castle] = True
+                self.location.remove('castle')
+                self.defLost['castle'] = True
                 restDamage -=20
-        for x in range(self.defTroops):
+        for x in range(self.troopsDefender):
             if restDamage >=4:
                 restDamage -=4
                 self.troopsLostDef +=1
         if self.troopsLostDef == self.troopsDefender:
-            if self.palace:
+            if self.buildings['palace']:
                 if restDamage >= 20:
-                    self.location.remove(palace)
-                    self.defLost[palace] = True
-                    self.location.remove(civ)
-                    self.defLost[civ] = True
+                    self.location.remove('palace')
+                    self.defLost['palace'] = True
+                    self.location.remove('civ')
+                    self.defLost['civ'] = True
                     # function to get knocked out
                 restDamage -=20
         else:
             self.location.remove(civ)
-            self.defLost[civ] = True
+            self.defLost['civ'] = True
             
     def reset(self):
         self.attacker = None

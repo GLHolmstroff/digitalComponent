@@ -9,6 +9,7 @@ from winScreen import *
 def setUpGame():
     game = Game()
     battle = Battle()
+    
     #I make 4 players just for testing
     player1 = Player('player 1',color(255,255,255))
     player2 = Player('player 2',color(255,0,0))
@@ -21,27 +22,29 @@ def setUpGame():
     game.currentPlayer = player1
     game.currentPlayerIndex = 0
 
-    shopFarm = Farm(0,0,0,0,'',game.currentPlayer)
-    shopVillage = Village(0,0,0,0,'',game.currentPlayer)
-    shopBarracks = Barracks(0,0,0,0,'',game.currentPlayer)
-    shopWalls = Walls(0,0,0,0,'',game.currentPlayer)
-    shopTower = Tower(0,0,0,0,'',game.currentPlayer)
-    shopCastle = Castle(0,0,0,0,'',game.currentPlayer)
+    shopFarm = Farm(0,0,0,0,'farm',game.currentPlayer)
+    shopVillage = Village(0,0,0,0,'village',game.currentPlayer)
+    shopBarracks = Barracks(0,0,0,0,'barracks',game.currentPlayer)
+    shopWalls = Walls(0,0,0,0,'walls',game.currentPlayer)
+    shopTower = Tower(0,0,0,0,'tower',game.currentPlayer)
+    shopCastle = Castle(0,0,0,0,'castle',game.currentPlayer)
+    palace = Palace(0,0,0,0,'palace',game.currentPlayer)
     
     setupmap = setupMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'setupMap', 5)
-    farmMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopFarmMap',(setupmap,),shopFarm,(game,),'shopScreen',screenManager)
-    villageMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopVillageMap',(setupmap,),shopVillage,(game,),'shopScreen',screenManager)
-    barracksMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopBarracksMap',(setupmap,),shopBarracks,(game,),'shopScreen',screenManager)
-    wallsMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopWallsMap',(setupmap,),shopWalls,(game,),'shopScreen',screenManager)
-    towerMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopTowerMap',(setupmap,),shopTower,(game,),'shopScreen',screenManager)
-    castleMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopCastleMap',(setupmap,),shopCastle,(game,),'shopScreen',screenManager)
-    batMap = battleMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'battleMap',(setupmap,),battle)
-    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(setupmap,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap))
+    palaceMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map',(setupmap,),palace,(game,),'shopScreen',screenManager)
+    farmMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopFarmMap',(palaceMap,),shopFarm,(game,),'shopScreen',screenManager)
+    villageMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopVillageMap',(palaceMap,),shopVillage,(game,),'shopScreen',screenManager)
+    barracksMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopBarracksMap',(palaceMap,),shopBarracks,(game,),'shopScreen',screenManager)
+    wallsMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopWallsMap',(palaceMap,),shopWalls,(game,),'shopScreen',screenManager)
+    towerMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopTowerMap',(palaceMap,),shopTower,(game,),'shopScreen',screenManager)
+    castleMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopCastleMap',(palaceMap,),shopCastle,(game,),'shopScreen',screenManager)
+    batMap = battleMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'battleMap',(palaceMap,),battle)
+    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(palaceMap,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap))
     
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
     
-    testScreen.addItem(linkButton(10,500,100,100,'Begin game button','shopScreen',screenManager, tString = 'Save Map and start game'))
+    testScreen.addItem(linkButton(10,500,100,100,'palaceButton','palaceScreen',screenManager, tString = 'Continue to Palaces'))
     testScreen.addItem(textBox(0,0,width,100,'textBox1', 'Create your map', 50))
     testScreen.addItem(funButton(0.2*width,0.4*height,100,100,'val+',setupmap.incSize,tString='+'))
     testScreen.addItem(funButton(0.2*width,0.6*height,100,100,'val-',setupmap.decSize,tString='-'))
@@ -52,6 +55,14 @@ def setUpGame():
     testScreen.addItem(colourPicker(1600,500,100,100,'mountainPicker','#F0E5B4'))
     testScreen.addItem(colourPicker(1300,700,100,100,'swampPicker','#3D342D'))
     testScreen.addItem(colourPicker(1600,700,100,100,'waterPicker','#4A8EA5'))
+    
+    palaceScreen = Screen('palaceScreen')
+    screenManager.addScreen(palaceScreen)
+    
+    palaceScreen.addItem(textBox(0,0,width,100,'textBox1', 'Pick your starting tile', 50))
+    palaceScreen.addItem(linkButton(10,500,100,100,'Begin game button','shopScreen',screenManager, tString = 'Begin game'))
+    palaceScreen.addItem(palaceMap)
+    palaceScreen.addItem(funButton(1300, 0.5*height, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
     
     mapScreen = Screen('mapScreen')
     screenManager.addScreen(mapScreen)
@@ -102,7 +113,9 @@ def setUpGame():
     
     battleMapScreen.addItem(batMap)
     battleMapScreen.addItem(mapUpdateButton(10,10,100,100,'battleMapUpdate',(castleMap,),'battleSim',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap, tString = 'Go to Battle'))
-    
+    battle.setDefender(player1)
+    battle.setDamToDef(30)
+    battleMapScreen.addItem(funButton(10,120,100,100,'Do Battle',battle.defDamage,tString='Do Battle'))
     
     dice1 = dice(200,500,100,100,'dice1',1)
     dice2 = dice(300,500,100,100,'dice2',2)
