@@ -166,7 +166,6 @@ def setUpGame():
 
     settingScreen = Screen('settingScreen')
     screenManager.addScreen(settingScreen)
-<<<<<<< HEAD
     leftCollumn = item(0,0,400,height,'settingScreenLeftCollumn')
     settingScreen.addItem(leftCollumn)
     settingScreen.addItem(textBox(400,100,width-400,100,'settingScreenTextBox1', 'Spelmode:', 50))
@@ -187,13 +186,8 @@ def setUpGame():
     settingScreen.addItem(funDropDown(80,280,250,40,'GameModeDropDown','Last one standing',game.setGameMode,'Last one standing', 'Three castles', 'firstKnockOut'))
     # settingScreen.addItem(varBox(400,200,width-400,80,'gameModeTextBox',(game),game.gameMode, 'gameMode'))
     settingScreen.addItem(setupDiceGroup1)
-    settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','shopScreen',screenManager,tString = 'Start'))
-=======
-
-    settingScreen.addItem(textBox(width/2 - 150,height/2,200,50,'amountOfPlayersText','Amount of players:',20, tColor = '#ffffff'))
-    settingScreen.addItem(dropDown(width/2+50,height/2,100,50,'dropdown1','1', '2','3','4'))
     settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','testScreen',screenManager,tString = 'Start'))
->>>>>>> refs/remotes/origin/master
+
 
     
 

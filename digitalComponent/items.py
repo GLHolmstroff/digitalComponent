@@ -286,23 +286,6 @@ class varBox(textBox):
         # print(self.name)
         self.tString = getattr(value, self.attrname)
         
-class Building(item):
-    def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
-        super(Building, self).__init__(x,y,w,h,name)
-        self.owner = owner
-        self.cost = cost
-        self.mil = mil
-        self.civ = not self.mil
-        self.health = health
-        self.vil = vil
-        self.bar = bar
-    #     self.img = loadImage(kwargs.get('imgUrl'))
-        
-    # def display(self):
-    #     image(self.img,self.x,self.y,self.w,self.h)
-    
-<<<<<<< HEAD
-    
 class setupDropDown(dropDown):
     def __init__(self,x,y,w,h,name,title,object,diceGroup,*options,**kwargs):
         super(setupDropDown, self).__init__(x,y,w,h,name,title,*options,**kwargs)
@@ -344,7 +327,22 @@ class funDropDown(dropDown):
     
     def sendToFun(self):
         self.function(self.output)
-=======
+        
+class Building(item):
+    def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
+        super(Building, self).__init__(x,y,w,h,name)
+        self.owner = owner
+        self.cost = cost
+        self.mil = mil
+        self.civ = not self.mil
+        self.health = health
+        self.vil = vil
+        self.bar = bar
+    #     self.img = loadImage(kwargs.get('imgUrl'))
+        
+    # def display(self):
+    #     image(self.img,self.x,self.y,self.w,self.h)
+        
     def setOwner(self,value):
         self.owner = value
       
@@ -382,7 +380,6 @@ class Castle(Building):
     def __init__(self,x,y,w,h,name,owner,**kwargs):
         super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
 
->>>>>>> refs/remotes/origin/master
         
 
 
