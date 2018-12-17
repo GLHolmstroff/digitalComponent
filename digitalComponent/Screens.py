@@ -35,7 +35,8 @@ def setUpGame():
     wallsMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopWallsMap',(setupmap,),shopWalls,(game,),'shopScreen',screenManager)
     towerMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopTowerMap',(setupmap,),shopTower,(game,),'shopScreen',screenManager)
     castleMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'shopCastleMap',(setupmap,),shopCastle,(game,),'shopScreen',screenManager)
-    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(setupmap,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap))
+    batMap = battleMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'battleMap',(setupmap,),battle)
+    map2 = displayMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'displayMap',(setupmap,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap))
     
     testScreen = Screen('testScreen')
     screenManager.addScreen(testScreen)
@@ -64,37 +65,43 @@ def setUpGame():
     screenManager.addScreen(shopFarmMapScreen)
     
     shopFarmMapScreen.addItem(farmMap)
-    shopFarmMapScreen.addItem(mapUpdateButton(10,10,100,100,'farmMapUpdate',(farmMap,),'shopScreen',screenManager,villageMap,barracksMap,wallsMap,towerMap,castleMap, tString = 'Go to Shop'))
+    shopFarmMapScreen.addItem(mapUpdateButton(10,10,100,100,'farmMapUpdate',(farmMap,),'shopScreen',screenManager,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap, tString = 'Go to Shop'))
     
     shopVillageMapScreen = Screen('shopVillageMapScreen')
     screenManager.addScreen(shopVillageMapScreen)
     
     shopVillageMapScreen.addItem(villageMap)
-    shopVillageMapScreen.addItem(mapUpdateButton(10,10,100,100,'villageMapUpdate',(villageMap,),'shopScreen',screenManager,farmMap,barracksMap,wallsMap,towerMap,castleMap, tString = 'Go to Shop'))
+    shopVillageMapScreen.addItem(mapUpdateButton(10,10,100,100,'villageMapUpdate',(villageMap,),'shopScreen',screenManager,farmMap,barracksMap,wallsMap,towerMap,castleMap,batMap, tString = 'Go to Shop'))
     
     shopBarracksMapScreen = Screen('shopBarracksMapScreen')
     screenManager.addScreen(shopBarracksMapScreen)
     
     shopBarracksMapScreen.addItem(barracksMap)
-    shopBarracksMapScreen.addItem(mapUpdateButton(10,10,100,100,'barracksMapUpdate',(barracksMap,),'shopScreen',screenManager,farmMap,villageMap,wallsMap,towerMap,castleMap, tString = 'Go to Shop'))
+    shopBarracksMapScreen.addItem(mapUpdateButton(10,10,100,100,'barracksMapUpdate',(barracksMap,),'shopScreen',screenManager,farmMap,villageMap,wallsMap,towerMap,castleMap,batMap, tString = 'Go to Shop'))
     
     shopWallsMapScreen = Screen('shopWallsMapScreen')
     screenManager.addScreen(shopWallsMapScreen)
     
     shopWallsMapScreen.addItem(wallsMap)
-    shopWallsMapScreen.addItem(mapUpdateButton(10,10,100,100,'wallsMapUpdate',(wallsMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,towerMap,castleMap, tString = 'Go to Shop'))
+    shopWallsMapScreen.addItem(mapUpdateButton(10,10,100,100,'wallsMapUpdate',(wallsMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,towerMap,castleMap,batMap, tString = 'Go to Shop'))
     
     shopTowerMapScreen = Screen('shopTowerMapScreen')
     screenManager.addScreen(shopTowerMapScreen)
     
     shopTowerMapScreen.addItem(towerMap)
-    shopTowerMapScreen.addItem(mapUpdateButton(10,10,100,100,'wallsMapUpdate',(towerMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,castleMap, tString = 'Go to Shop'))
+    shopTowerMapScreen.addItem(mapUpdateButton(10,10,100,100,'towerMapUpdate',(towerMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,castleMap,batMap, tString = 'Go to Shop'))
     
     shopCastleMapScreen = Screen('shopCastleMapScreen')
     screenManager.addScreen(shopCastleMapScreen)
     
     shopCastleMapScreen.addItem(castleMap)
-    shopCastleMapScreen.addItem(mapUpdateButton(10,10,100,100,'wallsMapUpdate',(castleMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap, tString = 'Go to Shop'))
+    shopCastleMapScreen.addItem(mapUpdateButton(10,10,100,100,'castleMapUpdate',(castleMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,batMap, tString = 'Go to Shop'))
+    
+    battleMapScreen = Screen('battleMapScreen')
+    screenManager.addScreen(battleMapScreen)
+    
+    battleMapScreen.addItem(batMap)
+    battleMapScreen.addItem(mapUpdateButton(10,10,100,100,'battleMapUpdate',(castleMap,),'battleSim',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap, tString = 'Go to Battle'))
     
     
     dice1 = dice(200,500,100,100,'dice1',1)
@@ -317,3 +324,4 @@ def setUpGame():
     battleSimScreen.addItem(checkbox(1670,770,20,20,'palace',0,battle.buildings, 'palace'))
     battleSimScreen.addItem(textBox(1680,765,100,24,'palace', 'Palace', 20))
     battleSimScreen.addItem(linkButton(860,880,200,100,'rollButton','diceScreen',screenManager, tString = 'Roll'))
+    battleSimScreen.addItem(linkButton(10,120,100,100,'rollButton','battleMapScreen',screenManager, tString = 'BattleMap'))
