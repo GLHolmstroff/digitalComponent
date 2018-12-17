@@ -82,20 +82,26 @@ class button(clickable):
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
+        self.hover = False
         super(button, self).__init__(x,y,w,h,name, **kwargs)
     
     def onClick(self, *args):
         pass
     
     def onHover(self):
-        pass
+        self.hover = True
     
     def display(self):
-        fill(self.backgroundColor)
+        if self.hover:
+            fill(color(200))
+            self.hover = False
+        else:
+            fill(self.backgroundColor)
         rect(self.x,self.y,self.w,self.h,10,10,10,10)
         fill(self.tColor)
         textSize(self.tSize)
         text(self.tString,self.x,self.y,self.w,self.h)
+    
     
 class linkButton(button):
     
@@ -262,12 +268,7 @@ class variableText(textBox):
         text(str(self.value), self.x,self.y,self.w,self.h)
         
 
-class setupDropDown(dropDown):
-    def __init__(self,x,y,w,h,name,title,*options,**kwargs):
-        super(setupDropDown, self).__init__(self,x,y,w,h,name,title,*options,**kwargs)
-    
-    def outFun(self):
-        pass
+
         
 class varBox(textBox):
     def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):
@@ -282,7 +283,50 @@ class varBox(textBox):
             x.bindTo(self.update)
         
     def update(self,value):
+        # print(self.name)
         self.tString = getattr(value, self.attrname)
+        
+class setupDropDown(dropDown):
+    def __init__(self,x,y,w,h,name,title,object,diceGroup,*options,**kwargs):
+        super(setupDropDown, self).__init__(x,y,w,h,name,title,*options,**kwargs)
+        self.object = object
+        self.diceGroup = diceGroup
+        
+    def onClick(self):
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y and mouseY < self.y + self.h:
+            if  not self.active:
+                self.active = True
+                self.h = (len(self.options) + 1) * self.baseh
+            else:
+                self.active = False
+                self.h = self.baseh
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.output = (mouseY - self.y)//self.baseh-1
+            self.title = str(self.options[self.output])
+            self.object.setAmount(self.output + 1)
+            self.diceGroup.changeAmount(self.output + 2)
+        
+        
+class funDropDown(dropDown):
+    def __init__(self,x,y,w,h,name,title,function,*options,**kwarg):
+        super(funDropDown, self).__init__(x,y,w,h,name,title,*options,**kwarg)
+        self.function = function
+    
+    def onClick(self):
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y and mouseY < self.y + self.h:
+            if  not self.active:
+                self.active = True
+                self.h = (len(self.options) + 1) * self.baseh
+            else:
+                self.active = False
+                self.h = self.baseh
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.output = (mouseY - self.y)//self.baseh-1
+            self.title = str(self.options[self.output])
+        self.sendToFun()
+    
+    def sendToFun(self):
+        self.function(self.output)
         
 class Building(item):
     def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
@@ -298,7 +342,7 @@ class Building(item):
         
     # def display(self):
     #     image(self.img,self.x,self.y,self.w,self.h)
-    
+        
     def setOwner(self,value):
         self.owner = value
       
@@ -337,3 +381,9 @@ class Castle(Building):
         super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
 
         
+
+
+
+    
+    
+    
