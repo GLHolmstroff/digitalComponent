@@ -96,9 +96,26 @@ def setUpGame():
 
     settingScreen = Screen('settingScreen')
     screenManager.addScreen(settingScreen)
+    leftCollumn = item(0,0,400,height,'settingScreenLeftCollumn')
+    settingScreen.addItem(leftCollumn)
+    settingScreen.addItem(textBox(400,100,width-400,100,'settingScreenTextBox1', 'Spelmode:', 50))
+    settingScreen.addItem(textBox(400,200,width-400,100,'textBox1', 'last one standing', 30))
 
-    settingScreen.addItem(textBox(width/2 - 150,height/2,200,50,'amountOfPlayersText','Amount of players:',20, tColor = '#ffffff'))
-    settingScreen.addItem(dropDown(width/2+50,height/2,100,50,'dropdown1','1', '2','3','4'))
+    settingScreen.addItem(textBox(400,400,width-400,100,'textBox1', 'First player to start',50))
+    settingScreen.addItem(textBox(400,500,width-400,100,'textBox1', 'Click the dice',30))
+    setupDice1 = setupDice(450,height/2 + 50, 100,100,'setupDice1',1,backgroundColor = color(255,0,0))
+    setupDice2 = setupDice(650,height/2 + 50, 100,100,'setupDice2',1,backgroundColor = color(255,255,0))
+    setupDice3 = setupDice(850,height/2 + 50, 100,100,'setupDice3',1,backgroundColor = color(0,255,0))
+    setupDice4 = setupDice(1050,height/2 + 50, 100,100,'setupDice4',1,backgroundColor = color(0,0,255))
+    settingScreenDices = [setupDice1,setupDice2,setupDice3,setupDice4]
+    setupDiceGroup1 = setupDiceGroup(100,height/2 + 50, width,100,'setupDiceGroup1',game, *settingScreenDices)
+    
+    settingScreen.addItem(textBox(0,600,400,50,'amountOfPlayersText','Amount of players:',25, tColor = '#ffffff'))
+    settingScreen.addItem(textBox(0,200,400,50,'gameModeText','Game mode:',25, tColor = '#ffffff'))
+    settingScreen.addItem(setupDropDown(80,680,250,40,'dropdown1','Chose',game, setupDiceGroup1, '2','3','4'))
+    settingScreen.addItem(funDropDown(80,280,250,40,'GameModeDropDown','Last one standing',game.setGameMode,'Last one standing', 'Three castles', 'firstKnockOut'))
+    # settingScreen.addItem(varBox(400,200,width-400,80,'gameModeTextBox',(game),game.gameMode, 'gameMode'))
+    settingScreen.addItem(setupDiceGroup1)
     settingScreen.addItem(linkButton(width/2-50,height - 140,100,50,'settingToTest','shopScreen',screenManager,tString = 'Start'))
 
     
@@ -197,6 +214,9 @@ def setUpGame():
     shopScreen.addItem(varFunButton(width - 90, 930, 80, 40, 'addWallsButton', game.currentPlayer.setwalls,1,(game.currentPlayer,game), 'setwalls'))
     shopScreen.addItem(textBox(width - 90, 930, 80, 40, 'addWallsButtonText', 'add', 20))
 
+    shopScreen.addItem(textBox(800,100,200,30,'currentPlayerCoinsText', 'Coins:', tColor = color(255)))
+    shopScreen.addItem(varBox(800,150,200,30,'currentPlayerCoins', (game,) + tuple(game.players),game.currentPlayer.coins,'coins',tSize = 20, tColor = color(255)))
+    
     shopScreen.addItem(textBox(40,100,200,30,'currentPlayerSwampText', 'Swamps:',20,color(255)))
     shopScreen.addItem(varBox(250,100,100,30,'varText1',(game,)+tuple(game.players),game.currentPlayer.swamp,'swamp',tSize = 20, tColor = color(255)))
 
