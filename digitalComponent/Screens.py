@@ -93,6 +93,7 @@ def setUpGame():
     shopCastleMapScreen = Screen('shopCastleMapScreen')
     screenManager.addScreen(shopCastleMapScreen)
     
+    shopCastleMapScreen.addItem(castleMap)
     shopCastleMapScreen.addItem(mapUpdateButton(10,10,100,100,'wallsMapUpdate',(castleMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap, tString = 'Go to Shop'))
     
     
