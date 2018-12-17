@@ -153,20 +153,18 @@ class varFunButton(funButton):
     def update(self,value):
         self.fun = getattr(value, self.attrname)
         
-class varLinkFunButton(linkButton):
-    def __init__(self,x,y,w,h,name,parents,dest,manager,fun,arg = None,**kwargs):
-        super(varLinkFunButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
-        self.fun = fun
-        self.arg = arg
+class mapUpdateButton(linkButton):
+    def __init__(self,x,y,w,h,name,parents,dest,manager,*tarMaps,**kwargs):
+        super(mapUpdateButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
+        self.tarMaps = tarMaps
+        self.argMap = parents[0]
         self.parents = parents
         for x in self.parents:
             x.bindTo(self.update)
         
     def onClick(self):
-        if self.arg is not None:
-            self.fun(self.arg)
-        else:
-            self.fun()
+        for Map in self.tarMaps:
+            Map.update(self.argMap)
         self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
     def update(self,value):
@@ -292,6 +290,7 @@ class Building(item):
         self.owner = owner
         self.cost = cost
         self.mil = mil
+        self.civ = not self.mil
         self.health = health
         self.vil = vil
         self.bar = bar
@@ -330,11 +329,11 @@ class Walls(Building):
         super(Walls, self).__init__(x,y,w,h,name,owner,10,True,10,**kwargs)
 
 class Tower(Building):
-    def __init__(self,x,y,w,h,owner,**kwargs):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
         super(Tower, self).__init__(x,y,w,h,name,owner,15,True,15,**kwargs)
 
 class Castle(Building):
-    def __init__(self,x,y,w,h,owner,**kwargs):
+    def __init__(self,x,y,w,h,name,owner,**kwargs):
         super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
 
         

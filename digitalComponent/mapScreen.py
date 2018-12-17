@@ -96,7 +96,7 @@ class clickableTile(Tile, clickable):
         return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2))
     
     def toShopTile(self,targetBuilding,dest,manager):
-        return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager))
+        return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager,self.currentBuildings))
     
 class setupTile(clickableTile):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
@@ -147,36 +147,38 @@ class setupTile(clickableTile):
             self.mil = False
     
 class shopTile(clickableTile):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,targetBuilding=None,dest=None,manager=None, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,targetBuilding=None,dest=None,manager=None,cB=0, **kwargs):
         super(shopTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
         self.targetBuilding = targetBuilding
         self.dest = dest
         self.manager = manager
+        self.currentBuildings=cB
         
     def onClick(self):
         if self.targetBuilding is not None:
-             if self.currentBuildings < self.building:
-                if self.currentBuildings == 1 and self.targetBuilding.owner == self._building1.owner:
-                    self._building2 = self.targetBuilding.copy()
-                    self.currentBuildings +=1
-                elif self._building1 is None:
-                    self._building1 = self.targetBuilding.copy()
-                    self.currentBuildings +=1
-                    #Determine which tileatrribute to increase in owner, only when building first building on tile
-                    out = ''
-                    if self.colour == '#DAA33A':
-                        out = 'setdesert'
-                    elif self.colour == '#8CA74D':
-                        out = 'setforest'
-                    elif self.colour == '#C02823':
-                        out = 'sethighland'
-                    elif self.colour == '#F0E5B4':
-                        out = 'setmountain'
-                    elif self.colour == '#3D342D':
-                        out = 'setswamp'
-                    #call appropriate setter of the new building owner to increase by one            
-                    getattr(self.targetBuilding.owner,out)(1)
-                self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+            if (self.targetBuilding.mil and self.mil) or (self.targetBuilding.civ and self.civ):
+                if self.currentBuildings < self.building:
+                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name:
+                            self._building2 = self.targetBuilding.copy()
+                            self.currentBuildings +=1
+                    elif self._building1 is None:
+                        self._building1 = self.targetBuilding.copy()
+                        self.currentBuildings +=1
+                        #Determine which tileatrribute to increase in owner, only when building first building on tile
+                        out = ''
+                        if self.colour == '#DAA33A':
+                            out = 'setdesert'
+                        elif self.colour == '#8CA74D':
+                            out = 'setforest'
+                        elif self.colour == '#C02823':
+                            out = 'sethighland'
+                        elif self.colour == '#F0E5B4':
+                            out = 'setmountain'
+                        elif self.colour == '#3D342D':
+                            out = 'setswamp'
+                        #call appropriate setter of the new building owner to increase by one            
+                        getattr(self.targetBuilding.owner,out)(1)
+                    # self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
                     
         
             
@@ -417,21 +419,25 @@ class shopMap(clickableMap):
         self.displayPrep()
         self.mapParents = mapParents
         for x in self.mapParents:
-            x.bindTo(self.mapUpdate)
+            x.bindTo(self.update)
+        #Updating targetbuidling owner whenver currentplayer changes allows for one shopMap to be used for all players
         self.tbParents = tbParents
         for x in self.tbParents:
             x.bindTo(self.tbUpdate)
         self.dest = dest
         self.manager = manager
             
-    def mapUpdate(self, value):
+    def update(self, value):
         self.rows = value.rows
         self.columns = value.columns
         self.tiles = value.toShopMap(self.targetBuilding,self.dest,self.manager)
         self.displayPrep()
         
     def tbUpdate(self,value):
-        self.targetBuilding.setOwner(value) 
+        self.targetBuilding.setOwner(value)
+        
+    def __str__(self):
+        return(self.name)
         
         
 class colourPicker(button):
