@@ -91,12 +91,16 @@ class clickableTile(Tile, clickable):
             
     def onHover(self):
         pass
-
+    
+    #Conversion methods for internal updating of maps
     def toTile(self):
         return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2))
     
     def toShopTile(self,targetBuilding,dest,manager):
         return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager,self.currentBuildings))
+    
+    def toBattleTile(self,battle):
+        return(battleTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,battle,self.currentBuildings))
     
 class setupTile(clickableTile):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
@@ -158,7 +162,7 @@ class shopTile(clickableTile):
         if self.targetBuilding is not None:
             if (self.targetBuilding.mil and self.mil) or (self.targetBuilding.civ and self.civ):
                 if self.currentBuildings < self.building:
-                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name:
+                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name and self.targetBuilding.name != self._building1.name:
                             self._building2 = self.targetBuilding.copy()
                             self.currentBuildings +=1
                     elif self._building1 is None:
@@ -181,7 +185,51 @@ class shopTile(clickableTile):
                     # self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
                     
         
+class battleTile(clickableTile):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,battle=None,cB=0, **kwargs):
+        super(battleTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
+        self.battle = battle
+        self.currentBuildings=cB
             
+    def onClick(self):
+        self.battle.setLocation(self)
+        print(self.battle.location)
+        
+    def remove(self,string):
+        if string == 'civ':
+            for x in ['farm','village','barracks']:
+                if self._building2 is not None:
+                    if self._building2.name == x:
+                        self._building2 = None
+                        self.currentBuildings -= 1
+                    if self._building1 is not None:
+                        if self._building1.name == x:
+                            self._building1 = self._building2.copy()
+                            self._building2 = None
+                            self.currentBuildings -= 1
+                elif self._building1 is not None:
+                    if self._building1.name == x:
+                        self._building1 = None
+                        self.currentBuildings -= 1
+                    
+        else:
+            if self._building2 is not None:
+                if self._building2.name == string:
+                    self._building2 = None
+                    self.currentBuildings -= 1
+                if self._building1 is not None:
+                    if self._building1.name == string:
+                        self._building1 = self._building2.copy()
+                        self._building2 = None
+                        self.currentBuildings -= 1
+            elif self._building1 is not None:
+                if self._building1.name == string:
+                    self._building1 = None
+                    self.currentBuildings -= 1
+                
+            
+                
+        
 class Desert(Tile):
     def __init__(self,x,y,w,h,name):
         super(Desert, self).__init__(x,y,w,h,name,2,'#DAA33A',2,True,True,False)
@@ -258,6 +306,10 @@ class shopWater(shopTile):
     def __init__(self,x,y,w,h,name):
         super(shopWater, self).__init__(x,y,w,h,name,0,'#4A8EA5',0,False,False,False)
         
+class battleWater(battleTile):
+    def __init__(self,x,y,w,h,name):
+        super(battleWater, self).__init__(x,y,w,h,name,0,'#4A8EA5',0,False,False,False)
+        
 class gameMap(item):
     def __init__(self, x,y,w,h,name,rows, **kwargs):
         super(gameMap, self).__init__(x,y,w,h,name)
@@ -318,6 +370,7 @@ class clickableMap(gameMap,clickable):
     def onHover(self):
         pass
         
+    # Conversion methods for internal updating   
     def toDisplayMap(self):
         out = list()
         for a in range(self.columns):
@@ -338,6 +391,17 @@ class clickableMap(gameMap,clickable):
         for x in range(len(self.tiles)):
             for y in range(len(self.tiles[x])):
                 out[x][y] = self.tiles[x][y].toShopTile(targetBuilding,dest,manager)
+        return out
+    
+    def toBattleMap(self,battle):
+        out = list()
+        for a in range(self.columns):
+            out.append(list())
+            for b in range (self.rows):
+                out[a].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        for x in range(len(self.tiles)):
+            for y in range(len(self.tiles[x])):
+                out[x][y] = self.tiles[x][y].toBattleTile(battle)
         return out
     
     def bindTo(self,callback):
@@ -438,6 +502,26 @@ class shopMap(clickableMap):
         
     def __str__(self):
         return(self.name)
+    
+class battleMap(clickableMap):
+    def __init__(self,x,y,w,h,name,mapParents,battle,**kwargs):
+        super(battleMap, self).__init__(x,y,w,h,name,7)
+        self.tiles = list()
+        self.battle = battle
+        for a in range(self.columns):
+            self.tiles.append(list())
+            for b in range (self.rows):
+                self.tiles[a].append(shopWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.displayPrep()
+        self.mapParents = mapParents
+        for x in self.mapParents:
+            x.bindTo(self.update)
+
+    def update(self,value):
+        self.rows = value.rows
+        self.columns = value.columns
+        self.tiles = value.toBattleMap(self.battle)
+        self.displayPrep()
         
         
 class colourPicker(button):
