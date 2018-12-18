@@ -134,8 +134,10 @@ class setupDiceGroup(diceGroup):
                 elif self.results[i] > self.results[self.winningDice]:
                     rollAgain =  False
                     self.winningDice = i - 1
-            print(self.winningDice)
-            print(len(self.game.players))
+            print('winningdice ' + str(self.winningDice))
+            print('amount of players ' + str(len(self.game.players)))
+            for x in self.game.players: 
+                print(x.name)
         self.game.currentPlayer = self.game.setPlayer(self.game.players[self.winningDice])
         self.game.currentPlayerIndex = self.winningDice
     
