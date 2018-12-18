@@ -83,10 +83,14 @@ class dice(clickable):
         ellipse(self.x + 0.25 * self.w, self.y + 0.5 * self.h, 0.2*self.w, 0.2*self.h)
         ellipse(self.x + 0.75 * self.w, self.y + 0.5 * self.h, 0.2*self.w, 0.2*self.h)
         
+    def copy(self):
+        return dice(self.x,self.y,self.w,self.h,self.name,self.val,self.backgroundColor)
+        
 class diceGroup(clickable): 
     def __init__(self,x,y,w,h,name, *dice):
         super(diceGroup, self).__init__(x,y,w,h,name)
         self.dice=list()
+        self._observers = []
         for d in dice: 
             self.dice.append(d)
             
@@ -101,6 +105,9 @@ class diceGroup(clickable):
     def addDice(self,d):
         if isinstance(dice,d):
             self.dice.append(d)
+        
+    def bindTo(self,callback):
+        self._observers.append(callback)
             
 
 #some secific items I made for the setup screen
@@ -155,6 +162,38 @@ class setupDiceGroup(diceGroup):
         for d in self.dice:
             if d.active:
                 d.display()
+                
+class varDiceGroup(diceGroup):
+    def __init__(self,x,y,w,h,name,parents,attrname,function,*dice):
+        super(varDiceGroup,self).__init__(x,y,w,h,name,*dice)
+        self.amount = 0
+        self.parents = parents
+        self.attrname = attrname
+        for x in self.parents:
+            x.bindTo(self.update)
+        self.function = function
+        self.sum = 0
+            
+    def update(self, value):
+        self.amount = getattr(value,self.attrname)
+        self.resetDice()
+        
+    def resetDice(self):
+        self.dice = list()
+        for x in range(self.amount):
+            d = dice(self.x + 100*x,self.y,100,100,'',1)
+            self.dice.append(d.copy())
+            
+    def onClick(self):
+        self.sum = 0
+        for d in self.dice:
+            d.onClick()
+            self.sum += d.val
+        for callback in self._observers:
+            callback(self)    
+        self.function(self.sum)
+            
+        
         
         
 

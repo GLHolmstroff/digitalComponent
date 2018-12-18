@@ -227,6 +227,9 @@ class Player():
     def bindTo(self,callback):
         self._valsObservers.append(callback)
 
+    def __str__(self):
+        return(self.name)
+    
 class Battle(object):
     def __init__(self,game):
         self.game = game
@@ -241,8 +244,8 @@ class Battle(object):
         self.troopsLostAtt = 0
         self.troopsLostDef = 0
         self.defLost = {'troops' : self.troopsLostDef,'wall':False, 'tower':False, 'castle':False, 'palace':False, 'civ':False}
-        self.attLost = 0
         self._observers = []
+        game.bindTo(self.setAttacker)
         
     def bindTo(self, callback):
         self._observers.append(callback)
@@ -258,12 +261,14 @@ class Battle(object):
             callback(self)
 
     def setTroopsAttacker(self,x):
-        self.TroopsAttacker = x
+        self.troopsAttacker = x + 1
+        print(self.troopsAttacker)
         for callback in self._observers:
             callback(self)
 
     def setTroopsDefender(self,x):
-        self.TroopsDefender = x
+        self.troopsDefender = x + 1
+        print(self.troopsDefender)
         for callback in self._observers:
             callback(self)
 
@@ -306,11 +311,13 @@ class Battle(object):
         for callback in self._observers:
             callback(self)
         
-    def fight():
+    def fight(self):
         self.attDamage()
         self.defDamage()
+        for callback in self._observers:
+            callback(self)
 
-    def attDamage():
+    def attDamage(self):
         self.troopsLostAtt = 0
         restDamage = int(self.damToAtt)
         for x in range(self.troopsAttacker):
@@ -321,43 +328,46 @@ class Battle(object):
     def defDamage(self):
         self.troopsLostDef = 0
         restDamage = int(self.damToDef)
-        if self.buildings['wall']:
-            if restDamage >= 10:
-                self.location.remove('wall')
-                self.defLost[wall] = True
-                restDamage -= 10
-        if self.buildings['tower' ]:
-            if restDamage >= 15:
-                self.location.remove('tower')
-                self.defLost['tower'] = True
-                restDamage -=15
-        if self.buildings['castle']:
-            if restDamage >= 20:
-                self.location.remove('castle')
-                self.defLost['castle'] = True
-                restDamage -=20
+        if self.location is not None:
+            if self.buildings['wall']:
+                if restDamage >= 10:
+                    self.location.remove('wall')
+                    self.defLost[wall] = True
+                    restDamage -= 10
+            if self.buildings['tower' ]:
+                if restDamage >= 15:
+                    self.location.remove('tower')
+                    self.defLost['tower'] = True
+                    restDamage -=15
+            if self.buildings['castle']:
+                if restDamage >= 20:
+                    self.location.remove('castle')
+                    self.defLost['castle'] = True
+                    restDamage -=20
         for x in range(self.troopsDefender):
             if restDamage >=4:
                 restDamage -=4
                 self.troopsLostDef +=1
-        if self.troopsLostDef == self.troopsDefender:
-            if self.buildings['palace']:
-                if restDamage >= 20:
-                    self.location.remove('palace')
-                    self.defLost['palace'] = True
-                    self.location.remove('civ')
-                    self.defLost['civ'] = True
-                    print(self.attacker)
-                    self.game.knockoutWin(self.attacker)
-                    self.game.players.remove(self.defender)
-                    if len(self.game.players) == 1:
-                        self.game.lastWin()
-                    self.game.amountActive -= 1
-                    print('knocked out, leftover: ' + str(self.game.players))
-                restDamage -=20
-        else:
-            self.location.remove(civ)
-            self.defLost['civ'] = True
+        self.defLost['troops'] = self.troopsLostDef
+        if self.location is not None:
+            if self.troopsLostDef == self.troopsDefender:
+                if self.buildings['palace']:
+                    if restDamage >= 20:
+                        self.location.remove('palace')
+                        self.defLost['palace'] = True
+                        self.location.remove('civ')
+                        self.defLost['civ'] = True
+                        print(self.attacker)
+                        self.game.knockoutWin(self.attacker)
+                        self.game.players.remove(self.defender)
+                        if len(self.game.players) == 1:
+                            self.game.lastWin()
+                        self.game.amountActive -= 1
+                        print('knocked out, leftover: ' + str(self.game.players))
+                    restDamage -=20
+            else:
+                self.location.remove('civ')
+                self.defLost['civ'] = True
 
     def reset(self):
         self.attacker = None

@@ -158,6 +158,20 @@ class funButton(button):
             self.fun(self.arg)
         else:
             self.fun()
+            
+class linkFunButton(linkButton):
+    def __init__(self,x,y,w,h,name,fun,dest,manager,arg=None,**kwargs):
+        super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager)
+        self.fun = fun
+        self.arg = arg
+        
+    def onClick(self):
+        if self.arg is not None:
+            self.fun(self.arg)
+            self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+        else:
+            self.fun()
+            self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
         
 class varFunButton(funButton):
     def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,**kwargs):
@@ -237,6 +251,7 @@ class dropDown(clickable):
         self.actoutput = self.options[self.output]
         self.baseh = h
         self._observers = []
+        self.hover = -1
         
     def display(self):
         fill(200)
@@ -251,6 +266,9 @@ class dropDown(clickable):
             text(self.title,self.x,self.y,self.w,self.h)
             fill(255)
             for option in range(len(self.options)):
+                if self.hover == option:
+                    fill(200)
+                    self.hover = False
                 rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh,10,10,10,10)
                 fill(0)
                 text(str(self.options[option]),self.x,self.y + (option+1) * self.baseh,self.w,self.baseh)
@@ -274,7 +292,9 @@ class dropDown(clickable):
 
         
     def onHover(self):
-        pass
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.hover = (mouseY - self.y)//self.baseh-1
+            
         
     def bindTo(self,callback):
         self._observers.append(callback)
@@ -341,7 +361,7 @@ class varBox(textBox):
             x.bindTo(self.update)
         
     def update(self,value):
-        self.tString = getattr(value, self.attrname)
+        self.tString = str(getattr(value, self.attrname))
         
 class shopVarBox(varBox):
     def __init__(self,x,y,w,h,name,mparent,parents,var,attrname,tColor = '#ffffff', tSize = 20):
@@ -354,6 +374,35 @@ class shopVarBox(varBox):
             self.parents.append(x)
         for x in self.parents:
             x.bindTo(self.update)
+            
+class resultVarBox(varBox):
+    def __init__(self,x,y,w,h,name,parents,attacker = True,var = '',attrname = '',tColor = '#ffffff', tSzie = 20):
+        super(resultVarBox, self).__init__(x,y,w,h,name,parents,var,attrname)
+        self.attacker = attacker
+        self.tString = ''
+        
+    def update(self,value):
+        if self.attacker:
+            attLost = getattr(value, 'troopsLostAtt')
+            player = getattr(value, 'attacker')
+            if player is not None:
+                self.tString = player.name + ' lost ' + str(attLost) + 'troops.'
+        else:
+            defLost = getattr(value, 'defLost')
+            player = getattr(value, 'defender')
+            if player is not None:
+                self.tString = player.name + ' lost ' + str(defLost['troops']) + ' troops'
+                if defLost['wall']:
+                    self.tString += ', and a wall'
+                if defLost['tower']:
+                    self.tString += ', and a tower'
+                if defLost['castle']:
+                    self.tString += ', and a castle'
+                if defLost['palace']:
+                    self.tString += ', and their palace'
+                if defLost['civ']:
+                    self.tString += ', and all civilian buildings and units'
+                self.tString += '.'
         
         
 class winBox(textBox):
@@ -419,7 +468,17 @@ class funDropDown(dropDown):
     def sendToFun(self):
         self.function(self.output)
         
-    
+class varFunDropDown(funDropDown):
+    def __init__(self,x,y,w,h,name,parent,title,function,*options,**kwargs):
+        super(varFunDropDown, self).__init__(x,y,w,h,name,title,function,*options,**kwargs)
+        self.parents = parent
+        parent.bindToAll(self.update)
+        
+    def update(self,value):
+        self.options = value
+        
+    def sendToFun(self):
+        self.function(self.options[self.output])
         
 class Building(item):
     def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
