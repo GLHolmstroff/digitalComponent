@@ -172,7 +172,7 @@ class varFunButton(funButton):
         
 class varArgFunButton(varFunButton):
     def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,argparents,**kwargs):
-        super(varFunButton, self).__init__(x,y,w,h,name,fun,arg)
+        super(varArgFunButton, self).__init__(x,y,w,h,name,fun,arg,parents,attrname)
         self.argParents = argparents
         for x in self.argParents:
             x.bindTo(self.argUpdate)
@@ -183,6 +183,16 @@ class varArgFunButton(varFunButton):
         except ValueError:
             self.arg = 0
         
+class battleFunButton(varFunButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,argparents,index,**kwargs):
+        super(battleFunButton, self).__init__(x,y,w,h,name,fun,arg,parents,attrname)
+        self.argParents = argparents
+        self.index = index
+        for x in self.argParents:
+            x.bindToAll(self.argUpdate)
+            
+    def argUpdate(self,value):
+            self.arg = value[self.index]
 
 class linkVarFunButton(varFunButton):
     def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,destination,manager,**kwargs):
@@ -325,6 +335,21 @@ class varBox(textBox):
         # print(self.name)
         self.tString = getattr(value, self.attrname)
         
+class winBox(textBox):
+    def __init__(self,x,y,w,h,name,parents,attrname,tColor = 'fff', tSize = 20):
+        super(winBox,self).__init__(x,y,w,h,name,'')
+        self.tColor = tColor
+        self.tSize = tSize
+        self.parents = parents
+        self.tString = ''
+        self.attrname = attrname
+        for x in self.parents:
+            x.bindToWin(self.update)
+        
+    def update(self,value):
+        # print(self.name)
+        self.tString = getattr(value, self.attrname)
+        
 class setupDropDown(dropDown):
     def __init__(self,x,y,w,h,name,title,object,diceGroup,*options,**kwargs):
         super(setupDropDown, self).__init__(x,y,w,h,name,title,*options,**kwargs)
@@ -340,10 +365,13 @@ class setupDropDown(dropDown):
                 self.active = False
                 self.h = self.baseh
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
-            self.output = (mouseY - self.y)//self.baseh-1
+            self.output = (mouseY - self.y)//self.baseh - 1
             self.title = str(self.options[self.output])
+            print('output ' + str(self.output))
             self.object.setAmount(self.output + 1)
+            self.object.createPlayers(self.output + 1)
             self.diceGroup.changeAmount(self.output + 2)
+            
         
         
 class funDropDown(dropDown):

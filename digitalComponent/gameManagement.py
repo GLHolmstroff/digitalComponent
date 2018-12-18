@@ -1,17 +1,20 @@
 
 class Game:
-    def __init__(self):
+    def __init__(self,manager):
         self.colors = [color(255,0,0), color(0,255,255),color(0,255,0),color(0,0,255)]
         self.players = []
         self.amountActive = 0
         self._currentPlayer = None
         self._gameMode = 'LastManStanding'
         self._currentPlayerObservers = []
+        self._winnerObservers = []
+        self._allPlayerObservers = []
         self.currentPlayerIndex  = None
         self.board = None
         self.board = Board()
         self.setting = dict(lastManStanding = False, threeCastles = False, firstKnokOut = False)
-
+        self.winner = None
+        self.manager = manager
 
     def setPlayer(self,value):
         self._currentPlayer = value
@@ -20,14 +23,23 @@ class Game:
 
     def createPlayers(self,amount):
         self.players = []
-        for i in range(amount):
-            self.players.append(Player('player ' + str(i + 1), self.colors[i]))
-
+        for i in range(amount + 1):
+            self.players.append(Player('methodplayer ' + str(i + 1), self.colors[i]))
+        for callback in self._allPlayerObservers:
+            callback(self.players)
+    
+    # amount of active players playing the game
     def setAmount(self, amount):
         self.amountActive = amount
 
     def bindTo(self,callback):
         self._currentPlayerObservers.append(callback)
+        
+    def bindToWin(self,callback):
+        self._winnerObservers.append(callback)
+        
+    def bindToAll(self,callback):
+        self._allPlayerObservers.append(callback)
 
     def setGameMode(self, mode):
         if mode == 0:
@@ -55,6 +67,31 @@ class Game:
         else:
             self.currentPlayerIndex = 0
             self.setPlayer(self.players[self.currentPlayerIndex])
+        self.winCheck()
+            
+    def winCheck(self):
+        if self.setting['lastManStanding']:
+            if len(self.players) == 1:
+                self.winner = self.players[0]
+                for callback in self._winnerObservers:
+                    callback(self.winner)
+                self.manager.currentScreen = self.manager.screens.get('winScreen')
+        if self.setting['threeCastles']:
+            for player in self.players:
+                if player.castles >= 3:
+                    self.winner = player
+                    for callback in self._winnerObservers:
+                        callback(self.winner)
+                    self.manager.currentScreen = self.manager.screens.get('winScreen2')
+                    break;
+    
+    def knockoutWin(self, player):
+        if self.setting['firstKnokOut']:
+            self.winner = player
+            for callback in self._winnerObservers:
+                    callback(self.winner)
+            self.manager.currentScreen = self.manager.screens.get('winScreen3')
+            
 
 class Board():
     def __init__(self):
@@ -188,8 +225,9 @@ class Player():
         self._valsObservers.append(callback)
 
 class Battle(object):
-    def __init__(self):
-        self.attacker = None
+    def __init__(self,game):
+        self.game = game
+        self.attacker = self.game._currentPlayer
         self.defender = None
         self.troopsAttacker = 0
         self.troopsDefender = 0
@@ -201,35 +239,46 @@ class Battle(object):
         self.troopsLostDef = 0
         self.defLost = {'troops' : self.troopsLostDef,'wall':False, 'tower':False, 'castle':False, 'palace':False, 'civ':False}
         self.attLost = 0
+        self._observers = []
+        
+    def bindTo(self, callback):
+        self._observers.append(callback)
 
     def setAttacker(self,att):
         self.attacker = att
+        for callback in self._observers:
+            callback(self)
 
     def setDefender(self,defen):
         self.defender = defen
+        for callback in self._observers:
+            callback(self)
 
     def setTroopsAttacker(self,x):
         self.TroopsAttacker = x
+        for callback in self._observers:
+            callback(self)
 
     def setTroopsDefender(self,x):
         self.TroopsDefender = x
+        for callback in self._observers:
+            callback(self)
 
     def setLocation(self,loc):
         self.location = loc
         locBuildings = []
         if loc._building1 is not None:
             locBuildings.append(loc._building1.name)
+            self.defender = loc._building1.owner
         if loc._building2 is not None:
             locBuildings.append(loc._building2.name)
         for battleBuilding in self.buildings:
             for tileBuilding in locBuildings:
                 if battleBuilding == tileBuilding:
                     self.buildings[battleBuilding] = True
-
-
-
-    def setDamtoDef(self,x):
-        self.damToDef = x
+                    
+        for callback in self._observers:
+            callback(self)
 
     def setBuildings(wall=False,tower=False,castle=False,palace=False):
         if wall:
@@ -240,13 +289,27 @@ class Battle(object):
             self.buildings['castle']=True
         if palace:
             self.buildings['palace']=True
+        
+        for callback in self._observers:
+            callback(self)
 
     def setDamToAtt(self,x):
         self.damToAtt = x
+        for callback in self._observers:
+                callback(self)
 
     def setDamToDef(self,x):
         self.damToDef = x
+        for callback in self._observers:
+            callback(self)
+        
+    def fight():
+        self.attDamage()
+        self.defDamage()
 
+    def attDamage():
+        pass
+        
     def defDamage(self):
         self.troopsLostDef = 0
         restDamage = int(self.damToDef)
@@ -276,7 +339,10 @@ class Battle(object):
                     self.defLost['palace'] = True
                     self.location.remove('civ')
                     self.defLost['civ'] = True
-                    # function to get knocked out
+                    self.game.knockoutWin(self.attacker)
+                    self.game.players.remove(self.defender)
+                    self.game.amountActive -= 1
+                    print('knocked out, leftover: ' + str(self.game.players))
                 restDamage -=20
         else:
             self.location.remove(civ)

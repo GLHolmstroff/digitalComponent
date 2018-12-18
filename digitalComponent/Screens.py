@@ -7,10 +7,10 @@ from winScreen import *
 
 
 def setUpGame():
-    game = Game()
-    battle = Battle()
+    game = Game(screenManager)
+    battle = Battle(game)
     
-    #I make 4 players just for testing
+    # I make 4 players just for testing
     player1 = Player('player 1',color(255,255,255))
     player2 = Player('player 2',color(255,0,0))
     player3 = Player('player 3',color(0,255,0))
@@ -22,13 +22,13 @@ def setUpGame():
     game.currentPlayer = player1
     game.currentPlayerIndex = 0
 
-    shopFarm = Farm(0,0,0,0,'farm',game.currentPlayer)
-    shopVillage = Village(0,0,0,0,'village',game.currentPlayer)
-    shopBarracks = Barracks(0,0,0,0,'barracks',game.currentPlayer)
-    shopWalls = Walls(0,0,0,0,'walls',game.currentPlayer)
-    shopTower = Tower(0,0,0,0,'tower',game.currentPlayer)
-    shopCastle = Castle(0,0,0,0,'castle',game.currentPlayer)
-    palace = Palace(0,0,0,0,'palace',game.currentPlayer)
+    shopFarm = Farm(0,0,0,0,'farm',game._currentPlayer)
+    shopVillage = Village(0,0,0,0,'village',game._currentPlayer)
+    shopBarracks = Barracks(0,0,0,0,'barracks',game._currentPlayer)
+    shopWalls = Walls(0,0,0,0,'walls',game._currentPlayer)
+    shopTower = Tower(0,0,0,0,'tower',game._currentPlayer)
+    shopCastle = Castle(0,0,0,0,'castle',game._currentPlayer)
+    palace = Palace(0,0,0,0,'palace',game._currentPlayer)
     
     setupmap = setupMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'setupMap', 5)
     palaceMap = shopMap(0.3*width,0.1*height,0.75 * min(width,height),0.75 * min(width,height),'Map',(setupmap,),palace,(game,),'shopScreen',screenManager)
@@ -113,7 +113,8 @@ def setUpGame():
     
     battleMapScreen.addItem(batMap)
     battleMapScreen.addItem(mapUpdateButton(10,10,100,100,'battleMapUpdate',(castleMap,),'battleSim',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap, tString = 'Go to Battle'))
-    battle.setDefender(player1)
+    
+    
     battle.setDamToDef(30)
     battleMapScreen.addItem(funButton(10,120,100,100,'Do Battle',battle.defDamage,tString='Do Battle'))
     
@@ -138,22 +139,18 @@ def setUpGame():
     
     winScreen = Screen("winScreen")
     screenManager.addScreen(winScreen)
-    laststanding = False
-    winScreen.addItem(textBox(250,100,900,100,'textBox1', 'Choose one of the following winconditions', 50))
-    winScreen.addItem(textBox(350,250,500,100,'textBox1', 'last one standing', 30))
-    winScreen.addItem(textBox(700,250,500,100,'textBox1', '3 castles', 30))
-    winScreen.addItem(textBox(1200,250,500,100,'textBox1', 'fist conqueror wins', 30))
-    winScreen.addItem(checkbox(400,300,50,25,"last one standing",False,game.setting,'lastOneStanding'))
-    winScreen.addItem(checkbox(800,300,50,25,"3 castles",False,game.setting,'threeCastles'))
-    winScreen.addItem(checkbox(1200,300,50,25,"first knocked out",False,game.setting,'firstKnockOut'))
-    winScreen.addItem(linkButton(10,10,100,100,'linkButton1','mapScreen',screenManager, tString='Go to Map'))
-    winScreen.addItem(linkButton(10,120,100,100,'linkButton2','battleSim',screenManager, tString='Go to Battle'))
-    winScreen.addItem(textBox(250,400,3000,1000,'`textBox1', 'TEST', 30))
-    winScreen.addItem(linkButton(250,400,120,50,'testWin','winScreen2',screenManager))
+    winScreen.addItem(textBox(200,250,1000,500,'winText','Winner Winner Chicken Dinner',100,tColor = '17325547'))
+    winScreen.addItem(winBox(200,450,1000,500,'winText',(game,),'name',tSize = 30, tColor = '17325547'))
+    
     winScreen2 = Screen('winScreen2')
     screenManager.addScreen(winScreen2)
     winScreen2.addItem(textBox(200,250,1000,500,'winText','Winner Winner Chicken Dinner',100,tColor = '17325547'))
-    winScreen2.addItem(textBox(200,450,1000,500,'winText',player+' won',30,tColor = '17325547'))
+    winScreen2.addItem(winBox(200,450,1000,500,'winText',(game,),'name',tSize = 30, tColor = '17325547'))
+    
+    winScreen3 = Screen('winScreen3')
+    screenManager.addScreen(winScreen3)
+    winScreen3.addItem(textBox(200,250,1000,500,'winText','Winner Winner Chicken Dinner',100,tColor = '17325547'))
+    winScreen3.addItem(winBox(200,450,1000,500,'winText',(game,),'name',tSize = 30, tColor = '17325547'))
     # winScreen2.addItem(textBox(500,500,100,100,'winText','restart',100,tColor = '17325547'))
 
 
