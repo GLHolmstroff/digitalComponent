@@ -30,4 +30,4 @@ def mouseReleased():
 
 def keyTyped():
      # text input
-        screenManager.currentScreen.action('keyPress')
+    screenManager.currentScreen.action('keyPress')

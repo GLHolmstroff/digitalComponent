@@ -327,7 +327,23 @@ class funDropDown(dropDown):
     
     def sendToFun(self):
         self.function(self.output)
+
+class shopBuyButton(varFunButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,game, costs, destination, manager,**kwargs):
+        self.manager = manager
+        self.game = game
+        self.costs = costs
+        self.dest = destination
+        super(shopBuyButton, self).__init__(x,y,w,h,name,fun,arg,parents,attrname,**kwargs)
         
+    def onClick(self):
+        if self.game._currentPlayer.coins >= self.costs:
+            self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+            if self.arg is not None:
+                self.fun(self.arg)
+            else:
+                self.fun()
+    
 class Building(item):
     def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):
         super(Building, self).__init__(x,y,w,h,name)

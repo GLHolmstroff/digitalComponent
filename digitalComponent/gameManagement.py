@@ -65,7 +65,7 @@ class Player():
         self.active = False
         self.name = name
         self.colour = colour
-        self.coins = 500
+        self.coins = 50
         self.farms = 0
         self.castles = 0
         self.barracks = 0

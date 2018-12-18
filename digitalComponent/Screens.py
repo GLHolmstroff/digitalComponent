@@ -195,14 +195,6 @@ def setUpGame():
     shopScreen = Screen('shopScreen')
     screenManager.addScreen(shopScreen)
     
-    # Temp links to shopmapscreens
-    shopScreen.addItem(linkButton(10,10,100,100,'linkButton1','shopFarmMapScreen',screenManager, tString = 'Go to farmMap'))
-    shopScreen.addItem(linkButton(10,120,100,100,'linkButton1','shopVillageMapScreen',screenManager, tString = 'Go to villageMap'))
-    shopScreen.addItem(linkButton(10,230,100,100,'linkButton1','shopBarracksMapScreen',screenManager, tString = 'Go to BarracksMap'))
-    shopScreen.addItem(linkButton(10,340,100,100,'linkButton1','shopWallsMapScreen',screenManager, tString = 'Go to WallsMap'))
-    shopScreen.addItem(linkButton(10,450,100,100,'linkButton1','shopTowerMapScreen',screenManager, tString = 'Go to TowerMap'))
-    shopScreen.addItem(linkButton(10,450,100,100,'linkButton1','shopTowerMapScreen',screenManager, tString = 'Go to TowerMap'))
-    shopScreen.addItem(linkButton(10,560,100,100,'linkButton1','shopCastleMapScreen',screenManager, tString = 'Go to CastleMap'))
     
     sideBar = item(width-400,0,400,height,'sideBar')
     sideBar.backgroundColor = color(30)
@@ -213,88 +205,47 @@ def setUpGame():
     currentplayerbox = varBox(30,20,600,100,'currentplayerTextbox', (game,),game.currentPlayer.name ,'name',tSize = 40, tColor = color(0))
     shopScreen.addItem(currentplayerbox)
 
-    #adding all the add buttons
-    t = textBox(width - 380, 30, 280, 40, 'swampTextbox', 'Swamp', 20)
+
+    t = textBox(width - 380, 130, 280, 40, 'farmTextbox', 'Farm', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 30, 80, 40, 'addSwampButton',game.currentPlayer.setswamp,1,(game,),'setswamp'))
-    shopScreen.addItem(textBox(width - 90, 30, 80, 40, 'addSwampButtonText', 'add', 20))
-
-    t = textBox(width - 380, 130, 280, 40, 'desertTextbox', 'Desert', 20)
+    shopScreen.addItem(shopBuyButton(width - 90,130,80,40,'linkButton1',game.currentPlayer.setfarms,1,(game.currentPlayer,game), 'setfarms',game,4,'shopFarmMapScreen',screenManager, tString = 'add'))
+    
+    t = textBox(width - 380, 280, 280, 40, 'villageTextbox', 'Village', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 130, 80, 40, 'addDeserButton',game.currentPlayer.setdesert,1,(game.currentPlayer,game),'setdesert'))
-    shopScreen.addItem(textBox(width - 90, 130, 80, 40, 'addDesertButtonText', 'add', 20))
+    shopScreen.addItem(shopBuyButton(width - 90,280,80,40,'linkButton1',game.currentPlayer.setvillages,1,(game.currentPlayer,game), 'setvillages',game,5,'shopVillageMapScreen',screenManager, tString = 'add'))
 
-    t = textBox(width - 380, 230, 280, 40, 'mountainsTextbox', 'Mountains', 20)
+    t = textBox(width - 380, 430, 280, 40, 'barracksTextbox', 'Barracks', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 230, 80, 40, 'addMountainsButton',game.currentPlayer.setmountain,1,(game.currentPlayer,game), 'setmountain'))
-    shopScreen.addItem(textBox(width - 90, 230, 80, 40, 'addMountainsButtonText', 'add', 20))
+    shopScreen.addItem(shopBuyButton(width - 90,430,80,40,'linkButton1',game.currentPlayer.setbarracks,1,(game.currentPlayer,game), 'setbarracks',game,5,'shopBarracksMapScreen',screenManager, tString = 'add'))
 
-    t = textBox(width - 380, 330, 280, 40, 'forestTextbox', 'Forest', 20)
+    t = textBox(width - 380, 580, 280, 40, 'wallsTextbox', 'Walls', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 330, 80, 40, 'addForestButton', game.currentPlayer.setforest,1,(game.currentPlayer,game), 'setforest'))
-    shopScreen.addItem(textBox(width - 90, 330, 80, 40, 'addForestButtonText', 'add', 20))
+    shopScreen.addItem(shopBuyButton(width - 90,580,80,40,'linkButton1',game.currentPlayer.setwalls,1,(game.currentPlayer,game), 'setwalls',game,10,'shopWallsMapScreen',screenManager, tString = 'add'))
 
-    t = textBox(width - 380, 430, 280, 40, 'highlandsTextbox', 'Highlands', 20)
+
+    t = textBox(width - 380, 730, 280, 40, 'towerTextbox', 'Tower', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 430, 80, 40, 'addHighlandsButton', game.currentPlayer.sethighland,1,(game.currentPlayer,game), 'sethighland'))
-    shopScreen.addItem(textBox(width - 90, 430, 80, 40, 'addHighlandsButtonText', 'add', 20))
+    shopScreen.addItem(shopBuyButton(width - 90,730,80,40,'linkButton1',game.currentPlayer.settowers,1,(game.currentPlayer,game), 'settowers',game,15,'shopTowerMapScreen',screenManager, tString = 'add'))
 
-
-
-
-
-    t = textBox(width - 380, 1030, 280, 40, 'castleTextbox', 'Castle', 20)
+    t = textBox(width - 380, 880, 280, 40, 'castleTextbox', 'Castle', 20)
     t.backgroundColor = color(30)
     t.tColor = '#ffffff'
     shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 1030, 80, 40, 'addCastleButton', game.currentPlayer.setcastles,1,(game.currentPlayer,game), 'setcastles'))
-    shopScreen.addItem(textBox(width - 90, 1030, 80, 40, 'addCastleButtonText', 'add', 20))
+    shopScreen.addItem(shopBuyButton(width - 90,880,80,40,'linkButton1',game.currentPlayer.setcastles,1,(game.currentPlayer,game), 'setcastles',game,10,'shopCastleMapScreen',screenManager, tString = 'add'))
 
-    t = textBox(width - 380, 530, 280, 40, 'towerTextbox', 'Tower', 20)
-    t.backgroundColor = color(30)
-    t.tColor = '#ffffff'
-    shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 530, 80, 40, 'addTowerButton', game.currentPlayer.settowers,1,(game.currentPlayer,game), 'settowers'))
-    shopScreen.addItem(textBox(width - 90, 530, 80, 40, 'addTowerButtonText', 'add', 20))
 
-    t = textBox(width - 380, 630, 280, 40, 'farmTextbox', 'Farm', 20)
-    t.backgroundColor = color(30)
-    t.tColor = '#ffffff'
-    shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 630, 80, 40, 'addFarmButton',game.currentPlayer.setfarms,1,(game.currentPlayer,game), 'setfarms'))
-    shopScreen.addItem(textBox(width - 90, 630, 80, 40, 'addFarmButtonText', 'add', 20))
 
-    t = textBox(width - 380, 730, 280, 40, 'villageTextbox', 'Village', 20)
-    t.backgroundColor = color(30)
-    t.tColor = '#ffffff'
-    shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 730, 80, 40, 'addVillageButton', game.currentPlayer.setvillages,1,(game.currentPlayer,game), 'setvillages'))
-    shopScreen.addItem(textBox(width - 90, 730, 80, 40, 'addVillageText', 'add', 20))
-
-    t = textBox(width - 380, 830, 280, 40, 'barracksTextbox', 'Barracks', 20)
-    t.backgroundColor = color(30)
-    t.tColor = '#ffffff'
-    shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 830, 80, 40, 'addBarracksButton', game.currentPlayer.setbarracks,1,(game.currentPlayer,game), 'setbarracks'))
-    shopScreen.addItem(textBox(width - 90, 830, 80, 40, 'addBarracksButtonText', 'add', 20))
-
-    t = textBox(width - 380, 930, 280, 40, 'wallsTextbox', 'Walls', 20)
-    t.backgroundColor = color(30)
-    t.tColor = '#ffffff'
-    shopScreen.addItem(t)
-    shopScreen.addItem(varFunButton(width - 90, 930, 80, 40, 'addWallsButton', game.currentPlayer.setwalls,1,(game.currentPlayer,game), 'setwalls'))
-    shopScreen.addItem(textBox(width - 90, 930, 80, 40, 'addWallsButtonText', 'add', 20))
-
+   
     shopScreen.addItem(textBox(800,100,200,30,'currentPlayerCoinsText', 'Coins:', tColor = color(255)))
     shopScreen.addItem(varBox(800,150,200,30,'currentPlayerCoins', (game,) + tuple(game.players),game.currentPlayer.coins,'coins',tSize = 20, tColor = color(255)))
     
