@@ -9,7 +9,7 @@ pickedBuilding = None
 
 
 class Tile(item):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,currentBuildings=0, **kwargs):
         super(Tile, self).__init__(x,y,w,h,name, **kwargs)
         self.gold = gold        
         self.colour = colour
@@ -20,7 +20,7 @@ class Tile(item):
         self._hasRoad = hasRoad
         self._building1 = building1
         self._building2 = building2
-        self.currentBuildings = 0
+        self.currentBuildings = currentBuildings
         
     def display(self):
         #Draw hexagon
@@ -94,7 +94,7 @@ class clickableTile(Tile, clickable):
     
     #Conversion methods for internal updating of maps
     def toTile(self):
-        return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2))
+        return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,self.currentBuildings))
     
     def toShopTile(self,targetBuilding,dest,manager):
         return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager,self.currentBuildings))
@@ -200,30 +200,36 @@ class battleTile(clickableTile):
             for x in ['farm','village','barracks']:
                 if self._building2 is not None:
                     if self._building2.name == x:
+                        getattr(self._building2.owner,'set' + x + 's')(-1)
                         self._building2 = None
                         self.currentBuildings -= 1
                     if self._building1 is not None:
                         if self._building1.name == x:
+                            getattr(self._building1.owner,'set' + x + 's')(-1)
                             self._building1 = self._building2.copy()
                             self._building2 = None
                             self.currentBuildings -= 1
                 elif self._building1 is not None:
                     if self._building1.name == x:
+                        getattr(self._building1.owner,'set' + x + 's')(-1)
                         self._building1 = None
                         self.currentBuildings -= 1
                     
         else:
             if self._building2 is not None:
                 if self._building2.name == string:
+                    getattr(self._building2.owner,'set' + string + 's')(-1)
                     self._building2 = None
                     self.currentBuildings -= 1
                 if self._building1 is not None:
                     if self._building1.name == string:
+                        getattr(self._building1.owner,'set' + string + 's')(-1)
                         self._building1 = self._building2.copy()
                         self._building2 = None
                         self.currentBuildings -= 1
             elif self._building1 is not None:
                 if self._building1.name == string:
+                    getattr(self._building1.owner,'set' + string + 's')(-1)
                     self._building1 = None
                     self.currentBuildings -= 1
                 

@@ -234,7 +234,9 @@ class dropDown(clickable):
         self.options = options
         self.active = False
         self.output = 0
+        self.actoutput = self.options[self.output]
         self.baseh = h
+        self._observers = []
         
     def display(self):
         fill(200)
@@ -264,11 +266,18 @@ class dropDown(clickable):
                 self.h = self.baseh
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh-1
+            self.actoutput = self.options[self.output]
             self.title = str(self.options[self.output])
+            for callback in self._observers:
+                print(callback)
+                callback(self)
 
         
     def onHover(self):
         pass
+        
+    def bindTo(self,callback):
+        self._observers.append(callback)
     
         
 class checkbox(clickable):
@@ -299,7 +308,7 @@ class checkbox(clickable):
             ellipse(self.x + self.w - self.h/2,self.y + self.h/2 ,self.w/2, self.h-2)
 
 class variableText(textBox):
-    def __init__(self,x,y,w,h,name,location,item, tColor = 'fff', tSize = 20):
+    def __init__(self,x,y,w,h,name,location,item, tColor = '#ffffff', tSize = 20):
         super(variableText,self).__init__(x,y,w,h,name,'')
         self.tColor = tColor
         self.tSize = tSize
@@ -320,7 +329,7 @@ class variableText(textBox):
 
         
 class varBox(textBox):
-    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = 'fff', tSize = 20):
+    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = '#ffffff', tSize = 20):
         super(varBox,self).__init__(x,y,w,h,name,'')
         self.tColor = tColor
         self.tSize = tSize
@@ -332,8 +341,20 @@ class varBox(textBox):
             x.bindTo(self.update)
         
     def update(self,value):
-        # print(self.name)
         self.tString = getattr(value, self.attrname)
+        
+class shopVarBox(varBox):
+    def __init__(self,x,y,w,h,name,mparent,parents,var,attrname,tColor = '#ffffff', tSize = 20):
+        super(shopVarBox,self).__init__(x,y,w,h,name,parents,var,attrname)
+        self.mparent = mparent
+        self.mparent.bindToAll(self.updateParents)
+        
+    def updateParents(self,value):
+        for x in value:
+            self.parents.append(x)
+        for x in self.parents:
+            x.bindTo(self.update)
+        
         
 class winBox(textBox):
     def __init__(self,x,y,w,h,name,parents,attrname,tColor = 'fff', tSize = 20):
@@ -367,7 +388,6 @@ class setupDropDown(dropDown):
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh - 1
             self.title = str(self.options[self.output])
-            print('output ' + str(self.output))
             self.object.setAmount(self.output + 1)
             self.object.createPlayers(self.output + 1)
             self.diceGroup.changeAmount(self.output + 2)
@@ -375,9 +395,10 @@ class setupDropDown(dropDown):
         
         
 class funDropDown(dropDown):
-    def __init__(self,x,y,w,h,name,title,function,*options,**kwarg):
-        super(funDropDown, self).__init__(x,y,w,h,name,title,*options,**kwarg)
+    def __init__(self,x,y,w,h,name,title,function,*options,**kwargs):
+        super(funDropDown, self).__init__(x,y,w,h,name,title,*options,**kwargs)
         self.function = function
+        
     
     def onClick(self):
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y and mouseY < self.y + self.h:
@@ -389,11 +410,16 @@ class funDropDown(dropDown):
                 self.h = self.baseh
         if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
             self.output = (mouseY - self.y)//self.baseh-1
+            self.actoutput = self.options[self.output]
             self.title = str(self.options[self.output])
+            for callback in self._observers:
+                callback(self)
         self.sendToFun()
     
     def sendToFun(self):
         self.function(self.output)
+        
+    
         
 class Building(item):
     def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):

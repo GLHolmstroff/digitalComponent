@@ -118,26 +118,16 @@ class setupDiceGroup(diceGroup):
          self.game = game
     
     def onClick(self):
-        print('onClick')
         self.winningDice = 0
-        rollAgain = True
-        while rollAgain and self.amountActive > 0:
-            # print('rolling..')
-            self.results = []
-            for d in self.dice:
+        self.results = []
+        for d in self.dice:
+            if d.active:
                 d.onClick()
-                self.results.append(d.val)    
-            
-            for i in range(len(self.results)):
-                if self.results[i] == self.results[self.winningDice] and i != 0:
-                    rollAgain = True
-                elif self.results[i] > self.results[self.winningDice]:
-                    rollAgain =  False
-                    self.winningDice = i - 1
-            print('winningdice ' + str(self.winningDice))
-            print('amount of players ' + str(len(self.game.players)))
-            for x in self.game.players: 
-                print(x.name)
+                self.results.append(d.val)
+        try:    
+            self.winningDice = self.results.index(max(self.results))
+        except:
+            self.winningDice = 0
         self.game.currentPlayer = self.game.setPlayer(self.game.players[self.winningDice])
         self.game.currentPlayerIndex = self.winningDice
     

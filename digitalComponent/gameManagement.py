@@ -67,15 +67,10 @@ class Game:
         else:
             self.currentPlayerIndex = 0
             self.setPlayer(self.players[self.currentPlayerIndex])
+        self._currentPlayer.turnCoins()
         self.winCheck()
             
     def winCheck(self):
-        if self.setting['lastManStanding']:
-            if len(self.players) == 1:
-                self.winner = self.players[0]
-                for callback in self._winnerObservers:
-                    callback(self.winner)
-                self.manager.currentScreen = self.manager.screens.get('winScreen')
         if self.setting['threeCastles']:
             for player in self.players:
                 if player.castles >= 3:
@@ -92,6 +87,14 @@ class Game:
                     callback(self.winner)
             self.manager.currentScreen = self.manager.screens.get('winScreen3')
             
+    def lastWin(self):
+        if self.setting['lastManStanding']:
+            if len(self.players) == 1:
+                self.winner = self.players[0]
+                for callback in self._winnerObservers:
+                    callback(self.winner)
+                self.manager.currentScreen = self.manager.screens.get('winScreen')
+            
 
 class Board():
     def __init__(self):
@@ -102,7 +105,7 @@ class Player():
         self.active = False
         self.name = name
         self.colour = colour
-        self.coins = 500
+        self.coins = 0
         self.farms = 0
         self.castles = 0
         self.barracks = 0
@@ -218,8 +221,8 @@ class Player():
         for callback in self._valsObservers:
             callback(self)
         
-            
-            
+    def turnCoins(self):
+        self.setcoins(self.mountain*3 +self.forest*2+self.desert*2+self.swamp+self.highland*2)
 
     def bindTo(self,callback):
         self._valsObservers.append(callback)
@@ -308,7 +311,12 @@ class Battle(object):
         self.defDamage()
 
     def attDamage():
-        pass
+        self.troopsLostAtt = 0
+        restDamage = int(self.damToAtt)
+        for x in range(self.troopsAttacker):
+            if restDamage >= 4:
+                restDamage -= 4
+                self.troopsLostAtt += 1
         
     def defDamage(self):
         self.troopsLostDef = 0
@@ -339,8 +347,11 @@ class Battle(object):
                     self.defLost['palace'] = True
                     self.location.remove('civ')
                     self.defLost['civ'] = True
+                    print(self.attacker)
                     self.game.knockoutWin(self.attacker)
                     self.game.players.remove(self.defender)
+                    if len(self.game.players) == 1:
+                        self.game.lastWin()
                     self.game.amountActive -= 1
                     print('knocked out, leftover: ' + str(self.game.players))
                 restDamage -=20
