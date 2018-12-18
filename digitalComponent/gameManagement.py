@@ -70,7 +70,7 @@ class Player():
         self.castles = 0
         self.barracks = 0
         self.walls = 0
-        self.palaces = 0
+        self.palaces = 1
         self.villages = 0
         self.towers = 0
         self.mountain = 0
@@ -78,6 +78,8 @@ class Player():
         self.desert = 0
         self.swamp = 0
         self.highland = 0
+        self.villagers = 2
+        self.troops = 0
         # self.vals = dict(coins = 0, farms=0,castles = 0, walls = 0, palaces = 0, villages = 0, towers = 0,barracks = 0, mountain = 0, highland = 0, forest = 0, desert = 0, swamp = 0)
         self._valsObservers = []
 
@@ -108,7 +110,6 @@ class Player():
             self.setcoins(-10)
         for callback in self._valsObservers:
             callback(self)
-            print('added')
 
     def setpalaces(self,value):
         self.palaces += value
@@ -164,6 +165,24 @@ class Player():
     def setroad(self):
         if self.coins >= 1:
             self.setcoins(-1)
+            
+    def settroops(self,value):
+        if value > 0:
+            if self.coins >=2*value:
+                self.setcoins(-2*value)
+                self.troops += value
+            for callback in self._valsObservers:
+                callback(self)
+            
+    def setvillagers(self,value):
+        if self.villagers < 2:
+            self.setcoins(-2)
+            self.villagers += value
+        for callback in self._valsObservers:
+            callback(self)
+        
+            
+            
 
     def bindTo(self,callback):
         self._valsObservers.append(callback)

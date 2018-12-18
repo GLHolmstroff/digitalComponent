@@ -57,6 +57,7 @@ class textInput(clickable):
         textbox = textBox(self.x,self.y,self.w,self.h,self.name,'')
         self.intext = textbox
         self.active = False
+        self._observers = []
     
     def display(self):
         fill(200)
@@ -67,14 +68,24 @@ class textInput(clickable):
     
     def onClick(self):
         self.active = not(self.active)
+        if self.active:
+            self.intext.tString = ''
             
     
     def onKeyPress(self):
         if self.active:
             if key == BACKSPACE:
                 self.intext.remend()
+            elif key == ENTER:
+                self.active = False
+                for callback in self._observers:
+                    callback(self.intext.tString)
             else:
                 self.intext.addend(key)
+                
+    def bindTo(self,callback):
+        self._observers.append(callback)
+            
         
 
 class button(clickable):
@@ -159,6 +170,34 @@ class varFunButton(funButton):
     def update(self,value):
         self.fun = getattr(value, self.attrname)
         
+class varArgFunButton(varFunButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,argparents,**kwargs):
+        super(varFunButton, self).__init__(x,y,w,h,name,fun,arg)
+        self.argParents = argparents
+        for x in self.argParents:
+            x.bindTo(self.argUpdate)
+            
+    def argUpdate(self,value):
+        try:
+            self.arg = int(value)
+        except ValueError:
+            self.arg = 0
+        
+
+class linkVarFunButton(varFunButton):
+    def __init__(self,x,y,w,h,name,fun,arg,parents,attrname,destination,manager,**kwargs):
+        super(linkVarFunButton, self).__init__(x,y,w,h,name,fun,arg,parents,attrname)
+        self.dest = destination
+        self.manager = manager
+        
+    def onClick(self):
+        if self.arg is not None:
+            self.fun(self.arg)
+        else:
+            self.fun()
+        self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+        
+                    
 class mapUpdateButton(linkButton):
     def __init__(self,x,y,w,h,name,parents,dest,manager,*tarMaps,**kwargs):
         super(mapUpdateButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
