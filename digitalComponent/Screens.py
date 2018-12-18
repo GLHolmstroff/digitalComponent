@@ -336,3 +336,13 @@ def setUpGame():
     diceScreen.addItem(diceGroup1)
     diceScreen.addItem(diceGroup2)
     diceScreen.addItem(linkButton(10,110,100,100,'linkButton1','battleSim',screenManager, tString = 'Back'))
+    diceScreen.addItem(linkFunButton(width/2-100,800,200,100,'linkButton1',battle.fight,'battleResultScreen',screenManager, tString = 'Go to results'))
+    diceScreen.addItem(varBox(800,300,100,100,'diceGroup1val', (diceGroup1,),0,'sum',tSize = 40, tColor = color(0)))
+    diceScreen.addItem(varBox(800,500,100,100,'diceGroup1val', (diceGroup2,),0,'sum',tSize = 40, tColor = color(0)))
+    
+    battleResultScreen = Screen('battleResultScreen')
+    screenManager.addScreen(battleResultScreen)
+    battleResultScreen.addItem(linkButton(10,10,100,100,'linkButton1','shopScreen',screenManager, tString = 'Go to Shop'))
+    battleResultScreen.addItem(linkButton(10,120,100,100,'linkButton1','mapScreen',screenManager, tString = 'Go to Map'))
+    battleResultScreen.addItem(resultVarBox(width/3,height/2,400,100,'attackerResult',(battle,),True))
+    battleResultScreen.addItem(resultVarBox(2*width/3,height/2,400,100,'defenderResult',(battle,),False))

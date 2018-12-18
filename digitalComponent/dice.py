@@ -90,6 +90,7 @@ class diceGroup(clickable):
     def __init__(self,x,y,w,h,name, *dice):
         super(diceGroup, self).__init__(x,y,w,h,name)
         self.dice=list()
+        self._observers = []
         for d in dice: 
             self.dice.append(d)
             
@@ -104,6 +105,9 @@ class diceGroup(clickable):
     def addDice(self,d):
         if isinstance(dice,d):
             self.dice.append(d)
+        
+    def bindTo(self,callback):
+        self._observers.append(callback)
             
 
 #some secific items I made for the setup screen
@@ -168,6 +172,7 @@ class varDiceGroup(diceGroup):
         for x in self.parents:
             x.bindTo(self.update)
         self.function = function
+        self.sum = 0
             
     def update(self, value):
         self.amount = getattr(value,self.attrname)
@@ -180,11 +185,13 @@ class varDiceGroup(diceGroup):
             self.dice.append(d.copy())
             
     def onClick(self):
-        sum = 0
+        self.sum = 0
         for d in self.dice:
             d.onClick()
-            sum += d.val
-        self.function(sum)
+            self.sum += d.val
+        for callback in self._observers:
+            callback(self)    
+        self.function(self.sum)
             
         
         
