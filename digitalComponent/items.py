@@ -237,6 +237,7 @@ class dropDown(clickable):
         self.actoutput = self.options[self.output]
         self.baseh = h
         self._observers = []
+        self.hover = -1
         
     def display(self):
         fill(200)
@@ -251,6 +252,9 @@ class dropDown(clickable):
             text(self.title,self.x,self.y,self.w,self.h)
             fill(255)
             for option in range(len(self.options)):
+                if self.hover == option:
+                    fill(200)
+                    self.hover = False
                 rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh,10,10,10,10)
                 fill(0)
                 text(str(self.options[option]),self.x,self.y + (option+1) * self.baseh,self.w,self.baseh)
@@ -274,7 +278,9 @@ class dropDown(clickable):
 
         
     def onHover(self):
-        pass
+        if mouseX > self.x and mouseX < self.x + self.w and mouseY > self.y + self.baseh and mouseY < self.y + (len(self.options)+1) * self.baseh:
+            self.hover = (mouseY - self.y)//self.baseh-1
+            
         
     def bindTo(self,callback):
         self._observers.append(callback)
@@ -419,7 +425,17 @@ class funDropDown(dropDown):
     def sendToFun(self):
         self.function(self.output)
         
-    
+class varFunDropDown(funDropDown):
+    def __init__(self,x,y,w,h,name,parent,title,function,*options,**kwargs):
+        super(varFunDropDown, self).__init__(x,y,w,h,name,title,function,*options,**kwargs)
+        self.parents = parent
+        parent.bindToAll(self.update)
+        
+    def update(self,value):
+        self.options = value
+        
+    def sendToFun(self):
+        self.function(self.options[self.output])
         
 class Building(item):
     def __init__(self,x,y,w,h,name,owner,cost,mil,health,vil=False,bar=False,**kwargs):

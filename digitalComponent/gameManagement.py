@@ -227,6 +227,9 @@ class Player():
     def bindTo(self,callback):
         self._valsObservers.append(callback)
 
+    def __str__(self):
+        return(self.name)
+    
 class Battle(object):
     def __init__(self,game):
         self.game = game
@@ -258,12 +261,14 @@ class Battle(object):
             callback(self)
 
     def setTroopsAttacker(self,x):
-        self.TroopsAttacker = x
+        self.troopsAttacker = x + 1
+        print(self.troopsAttacker)
         for callback in self._observers:
             callback(self)
 
     def setTroopsDefender(self,x):
-        self.TroopsDefender = x
+        self.troopsDefender = x + 1
+        print(self.troopsDefender)
         for callback in self._observers:
             callback(self)
 
