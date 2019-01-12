@@ -7,6 +7,8 @@ from winScreen import *
 
 
 def setup():
+    # global img
+    # img = loadImage('background.png')
     fullScreen()
     # print(width,height)
     frameRate(35)
@@ -16,7 +18,9 @@ def setup():
 
 def draw():
     #reset the background
-    background(51)
+    
+    background("#116466")
+    # image(img,0,0)
     # display all items from currentScreen
     screenManager.currentScreen.display()
 
@@ -30,4 +34,4 @@ def mouseReleased():
 
 def keyTyped():
      # text input
-        screenManager.currentScreen.action('keyPress')
+    screenManager.currentScreen.action('keyPress')

@@ -120,10 +120,10 @@ class setupDiceGroup(diceGroup):
     def __init__(self,x,y,w,h,name,game,*dice):
          super(setupDiceGroup,self).__init__(x,y,w,h,name,*dice)
          self.results = []
-         self.amountActive = 0
+         self.amountActive = 2
          self.winningDice = 0
          self.game = game
-    
+         self.changeAmount(2)
     def onClick(self):
         self.winningDice = 0
         self.results = []

@@ -530,7 +530,7 @@ class battleMap(clickableMap):
         self.displayPrep()
         
         
-class colourPicker(button):
+class colourPicker(clickable):
     def __init__(self,x,y,w,h,name,colour, **kwargs):
         self.x = x
         self.y = y

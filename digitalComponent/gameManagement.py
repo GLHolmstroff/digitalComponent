@@ -3,8 +3,7 @@ class Game:
     def __init__(self,manager):
         self.colors = [color(255,0,0), color(0,255,255),color(0,255,0),color(0,0,255)]
         self.players = []
-        self.amountActive = 0
-        self._currentPlayer = None
+        self.amountActive = 1
         self._gameMode = 'LastManStanding'
         self._currentPlayerObservers = []
         self._winnerObservers = []
@@ -15,6 +14,9 @@ class Game:
         self.setting = dict(lastManStanding = False, threeCastles = False, firstKnokOut = False)
         self.winner = None
         self.manager = manager
+        self.createPlayers(3)
+        self._currentPlayer = self.players[1]
+        print(len(self.players))
 
     def setPlayer(self,value):
         self._currentPlayer = value
@@ -23,10 +25,12 @@ class Game:
 
     def createPlayers(self,amount):
         self.players = []
+        self.names = ["Red","Yellow","Green","Blue"]
         for i in range(amount + 1):
-            self.players.append(Player('methodplayer ' + str(i + 1), self.colors[i]))
+            self.players.append(Player(self.names[i], self.colors[i]))
         for callback in self._allPlayerObservers:
             callback(self.players)
+        print(len(self.players))
     
     # amount of active players playing the game
     def setAmount(self, amount):
