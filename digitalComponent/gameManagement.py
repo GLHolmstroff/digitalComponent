@@ -1,7 +1,7 @@
 
 class Game:
     def __init__(self,manager):
-        self.colors = [color(255,0,0), color(0,255,255),color(0,255,0),color(0,0,255)]
+        self.colors = [color(255,0,0), color(255,255,0),color(0,255,0),color(0,0,255)]
         self.players = []
         self.amountActive = 1
         self._gameMode = 'LastManStanding'
@@ -17,7 +17,7 @@ class Game:
         self.createPlayers(3)
         self._currentPlayer = self.players[1]
         self.currentPlayerIndex = 0
-        print(len(self.players))
+        # print(len(self.players))
 
     def setPlayer(self,value):
         self._currentPlayer = value
@@ -31,7 +31,7 @@ class Game:
             self.players.append(Player(self.names[i], self.colors[i]))
         for callback in self._allPlayerObservers:
             callback(self.players)
-        print(len(self.players))
+        # print(len(self.players))
     
     # amount of active players playing the game
     def setAmount(self, amount):
@@ -212,12 +212,13 @@ class Player():
             self.setcoins(-1)
             
     def settroops(self,value):
-        if value > 0:
-            if self.coins >=2*value:
-                self.setcoins(-2*value)
-                self.troops += value
-            for callback in self._valsObservers:
-                callback(self)
+        if self.barracks > 0:
+            if value > 0:
+                if self.coins >=2*value:
+                    self.setcoins(-2*value)
+                    self.troops += value
+                for callback in self._valsObservers:
+                    callback(self)
             
     def setvillagers(self,value):
         if self.villagers < 2:
@@ -267,13 +268,13 @@ class Battle(object):
 
     def setTroopsAttacker(self,x):
         self.troopsAttacker = x + 1
-        print(self.troopsAttacker)
+        # print(self.troopsAttacker)
         for callback in self._observers:
             callback(self)
 
     def setTroopsDefender(self,x):
         self.troopsDefender = x + 1
-        print(self.troopsDefender)
+        # print(self.troopsDefender)
         for callback in self._observers:
             callback(self)
 
@@ -362,7 +363,7 @@ class Battle(object):
                         self.defLost['palace'] = True
                         self.location.remove('civ')
                         self.defLost['civ'] = True
-                        print(self.attacker)
+                        # print(self.attacker)
                         self.game.knockoutWin(self.attacker)
                         self.game.players.remove(self.defender)
                         if len(self.game.players) == 1:
