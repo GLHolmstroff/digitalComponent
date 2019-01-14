@@ -216,7 +216,7 @@ class shopMapLinkButton(linkButton):
             
     def update(self,value):
         self.cond = getattr(value, self.attrname)
-        print(self.cond)
+        # print(self.cond)
         
     def onClick(self):
         if self.cond >= self.val:
