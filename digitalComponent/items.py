@@ -89,7 +89,7 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name,tString='', tSize = 20, tColor = '000', **kwargs):
+    def __init__(self,x,y,w,h,name,tString='', tSize = 25, tColor = '000', **kwargs):
         super(button, self).__init__(x,y,w,h,name, **kwargs)
         self.tString = tString
         self.tSize = tSize
