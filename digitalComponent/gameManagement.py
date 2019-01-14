@@ -226,6 +226,8 @@ class Player():
             self.villagers += value
         for callback in self._valsObservers:
             callback(self)
+            
+    
         
     def turnCoins(self):
         self.setcoins(self.mountain*3 +self.forest*2+self.desert*2+self.swamp+self.highland*2)
