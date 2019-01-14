@@ -203,7 +203,26 @@ class palaceButton(funButton):
             
     def checkEnabled(self):
         pass
-         
+
+class shopMapLinkButton(linkButton):
+    def __init__(self,x,y,w,h,name,cond,val,parents,attrname,dest,manager,**kwargs):
+        super(shopMapLinkButton, self).__init__(x,y,w,h,name,dest,manager)
+        self.cond = cond
+        self.val = val
+        self.parents = parents
+        self.attrname = attrname
+        for x in self.parents:
+            x.bindTo(self.update)
+            
+    def update(self,value):
+        self.cond = getattr(value, self.attrname)
+        print(self.cond)
+        
+    def onClick(self):
+        if self.cond >= self.val:
+            self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+            
+
 class linkFunButton(linkButton):
     def __init__(self,x,y,w,h,name,fun,dest,manager,arg=None,**kwargs):
         super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager)
@@ -578,6 +597,10 @@ class Tower(Building):
 class Castle(Building):
     def __init__(self,x,y,w,h,name,owner,**kwargs):
         super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
+        
+class Road(Building):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(Road, self).__init__(x,y,w,h,name,None,1,False,0,**kwargs)
 
         
 

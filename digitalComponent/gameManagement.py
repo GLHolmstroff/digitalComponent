@@ -16,6 +16,7 @@ class Game:
         self.manager = manager
         self.createPlayers(3)
         self._currentPlayer = self.players[1]
+        self.currentPlayerIndex = 0
         print(len(self.players))
 
     def setPlayer(self,value):
