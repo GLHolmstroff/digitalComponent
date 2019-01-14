@@ -197,10 +197,6 @@ def setUpGame():
     startDiceScreen.addItem(setupDiceGroup1)
     startDiceScreen.addItem(linkButton(50, height - 140,100,50,'startDiceToPlayerSetup', 'playerSetupScreen',screenManager,tString = 'Back'))
     startDiceScreen.addItem(linkButton(width - 150, height - 140,100,50,'startDiceToTestScreen','testScreen',screenManager,tString = 'Next'))
-    
-
-
-
 
     #a lot of code for the shopScreen
     shopScreen = Screen('shopScreen')
@@ -316,18 +312,30 @@ def setUpGame():
     shopScreen.addItem(textBox(610,730,200,40,'currentPlayerTowersText', 'Villagers:',30))
     shopScreen.addItem(shopVarBox(830,730,100,40,'varText1',game,[game,],game._currentPlayer.villagers, 'villagers', tSize = 30))
 
-    shopScreen.addItem(funButton(width - 630, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
-    shopScreen.addItem(linkButton(30, height - 100, 200,50,'mapButton','mapScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
+    # shopScreen.addItem(funButton(width - 630, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
+    shopScreen.addItem(linkButton(width-630 , height - 100, 200,50,'mapButton','battleStartScreen',screenManager, tString = 'Next',tColor = color(255), backgroundColor = color(51)))
+    
+    battleStartScreen = Screen('battleStartScreen')
+    screenManager.addScreen(battleStartScreen)
+    battleStartScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
+    battleStartScreen.addItem(textBox(0,0,width,200,'title', 'BATTLE', 50))
+    battleStartScreen.addItem(textBox(0,300,width,280,'explanation','Do you want to fight against someone?'))
+    battleStartScreen.addItem(linkButton(width/2 - 150,height/2-50,300,50,'linkButton2','battleSim',screenManager, tString = 'Yes, lets fight!'))
+    battleStartScreen.addItem(funButton(width/2 - 150, height/2 + 50,300,50,'nextPlayerButton',game.nextPlayer, tColor = color(255), backgroundColor = color(51)))
+    battleStartScreen.addItem(linkButton(width/2 - 150,height/2 + 50,300,50,'linkButton2','shopScreen',screenManager, tString = 'No, end turn'))
+    battleStartScreen.addItem(linkButton(30,height-100,100,50,'linkButton2','shopScreen',screenManager, tString = 'Back'))
+    
     
     battleSimScreen = Screen('battleSim')
     screenManager.addScreen(battleSimScreen)
     battleSimScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
-    battleSimScreen.addItem(linkButton(30,height-100,100,50,'linkButton2','mapScreen',screenManager, tString = 'Back'))
     battleSimScreen.addItem(textBox(0,0,width,200,'title', 'BATTLE SIMULATOR', 50))
+    battleSimScreen.addItem(textBox(0,300,width,280,'explanation','If you want to attack a building, select your troops and chose building on the map.'))
+    battleSimScreen.addItem(linkButton(30,height-100,100,50,'linkButton2','mapScreen',screenManager, tString = 'Back'))
     battleSimScreen.addItem(textBox(150,300,100,100,'attacker', 'Attacker', 20))
     battleSimScreen.addItem(varBox(150,375,500,50,'currentplayerTextbox', (game,),game._currentPlayer.name ,'name',tSize = 40, tColor = color(0)))
     battleSimScreen.addItem(textBox(1670,300,100,100,'troops1', 'Troops', 20))
-    attTroops = funDropDown(1270,375,500,30,'attTroopDropDown','1',battle.setTroopsAttacker,1,2,3,4,5)
+    attTroops = funDropDown(1270,375,500,30,'attTroopDropDown','2',battle.setTroopsAttacker,2,3,4,5)
     battleSimScreen.addItem(attTroops)
     
     battleSimScreen.addItem(textBox(150,500,100,100,'defender', 'Defender', 20))
@@ -336,7 +344,8 @@ def setUpGame():
     defTroops = funDropDown(1270,575,500,30,'defTroopDropDown','0',battle.setTroopsDefender,0,1,2,3,4,5)
     battleSimScreen.addItem(defTroops)
     battleSimScreen.addItem(linkButton(860,880,200,100,'rollButton','diceScreen',screenManager, tString = 'Roll'))
-    battleSimScreen.addItem(linkButton(width/2-100,320,200,100,'battleMapButton','battleMapScreen',screenManager, tString = 'Battle map'))
+    
+    battleSimScreen.addItem(linkButton(width/2-100,320,200,100,'battleMapButton','battleMapScreen',screenManager, tString = 'Select a building'))
     
     # dice1 = dice(200,500,100,100,'dice1',1)
     # dice2 = dice(300,500,100,100,'dice2',2)
