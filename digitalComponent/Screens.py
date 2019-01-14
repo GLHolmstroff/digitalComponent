@@ -11,16 +11,16 @@ def setUpGame():
     battle = Battle(game)
     
     # I make 4 players just for testing
-    player1 = Player('player 1',color(255,255,255))
-    player2 = Player('player 2',color(255,0,0))
-    player3 = Player('player 3',color(0,255,0))
-    player4 = Player('player 4',color(0,0,255))
-    game.players.append(player1)
-    game.players.append(player2)
-    game.players.append(player3)
-    game.players.append(player4)
-    game.currentPlayer = player1
-    game.currentPlayerIndex = 0
+    # player1 = Player('player 1',color(255,255,255))
+    # player2 = Player('player 2',color(255,0,0))
+    # player3 = Player('player 3',color(0,255,0))
+    # player4 = Player('player 4',color(0,0,255))
+    # game.players.append(player1)
+    # game.players.append(player2)
+    # game.players.append(player3)
+    # game.players.append(player4)
+    # game._currentPlayer = player1
+    # game._currentPlayerIndex = 0
 
     shopFarm = Farm(0,0,0,0,'farm',game._currentPlayer)
     shopVillage = Village(0,0,0,0,'village',game._currentPlayer)
@@ -28,6 +28,7 @@ def setUpGame():
     shopWalls = Walls(0,0,0,0,'walls',game._currentPlayer)
     shopTower = Tower(0,0,0,0,'tower',game._currentPlayer)
     shopCastle = Castle(0,0,0,0,'castle',game._currentPlayer)
+    shopRoad = Road(0,0,0,0,'road')
     palace = Palace(0,0,0,0,'palace',game._currentPlayer)
     
     setupmap = setupMap(0.3*width,0.3*height,0.60 * min(width,height),0.60 * min(width,height),'setupMap', 5)
@@ -38,6 +39,7 @@ def setUpGame():
     wallsMap = shopMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'shopWallsMap',(palaceMap,),shopWalls,(game,),'shopScreen',screenManager)
     towerMap = shopMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'shopTowerMap',(palaceMap,),shopTower,(game,),'shopScreen',screenManager)
     castleMap = shopMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'shopCastleMap',(palaceMap,),shopCastle,(game,),'shopScreen',screenManager)
+    roadMap = shopMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'shopRoadMap',(palaceMap,),shopRoad,(game,),'shopScreen',screenManager)
     batMap = battleMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'battleMap',(palaceMap,),battle)
     map2 = displayMap(0.3*width,0.23*height,0.7 * min(width,height),0.7 * min(width,height),'displayMap',(palaceMap,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap))
     
@@ -64,6 +66,7 @@ def setUpGame():
     palaceScreen.addItem(linkButton(10,500,100,100,'Begin game button','shopScreen',screenManager, tString = 'Begin game'))
     palaceScreen.addItem(palaceMap)
     palaceScreen.addItem(funButton(1300, 0.5*height, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
+    palaceScreen.addItem(funButton(1300,0.6*height,200,50,'defMapButton',palaceMap.toDefaultMap,arg = game.players,tString='Set default 2 player',tColor = color(255),backgroundColor = color(51)))
     
     mapScreen = Screen('mapScreen')
     screenManager.addScreen(mapScreen)
@@ -79,48 +82,54 @@ def setUpGame():
     shopFarmMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopFarmMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your farm",50))
     shopFarmMapScreen.addItem(farmMap)
-    shopFarmMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'farmMapUpdate',(farmMap,),'shopScreen',screenManager,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap, tString = 'Back'))
+    shopFarmMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'farmMapUpdate',(farmMap,),'shopScreen',screenManager,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap,roadMap, tString = 'Back'))
     
     shopVillageMapScreen = Screen('shopVillageMapScreen')
     screenManager.addScreen(shopVillageMapScreen)
     shopVillageMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopVillageMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your village",50))
     shopVillageMapScreen.addItem(villageMap)
-    shopVillageMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'villageMapUpdate',(villageMap,),'shopScreen',screenManager,farmMap,barracksMap,wallsMap,towerMap,castleMap,batMap, tString = 'Back'))
+    shopVillageMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'villageMapUpdate',(villageMap,),'shopScreen',screenManager,farmMap,barracksMap,wallsMap,towerMap,castleMap,batMap,roadMap, tString = 'Back'))
     
     shopBarracksMapScreen = Screen('shopBarracksMapScreen')
     screenManager.addScreen(shopBarracksMapScreen)
     shopBarracksMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopBarracksMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your barrack",50))
     shopBarracksMapScreen.addItem(barracksMap)
-    shopBarracksMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'barracksMapUpdate',(barracksMap,),'shopScreen',screenManager,farmMap,villageMap,wallsMap,towerMap,castleMap,batMap, tString = 'Back'))
+    shopBarracksMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'barracksMapUpdate',(barracksMap,),'shopScreen',screenManager,farmMap,villageMap,wallsMap,towerMap,castleMap,batMap,roadMap, tString = 'Back'))
     
     shopWallsMapScreen = Screen('shopWallsMapScreen')
     screenManager.addScreen(shopWallsMapScreen)
     shopWallsMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopWallsMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your wall",50))
     shopWallsMapScreen.addItem(wallsMap)
-    shopWallsMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'wallsMapUpdate',(wallsMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,towerMap,castleMap,batMap, tString = 'Back'))
+    shopWallsMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'wallsMapUpdate',(wallsMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,towerMap,castleMap,batMap,roadMap, tString = 'Back'))
     
     shopTowerMapScreen = Screen('shopTowerMapScreen')
     screenManager.addScreen(shopTowerMapScreen)
     shopTowerMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopTowerMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your tower",50))
     shopTowerMapScreen.addItem(towerMap)
-    shopTowerMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'towerMapUpdate',(towerMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,castleMap,batMap, tString = 'Back'))
+    shopTowerMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'towerMapUpdate',(towerMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,castleMap,batMap,roadMap, tString = 'Back'))
     
     shopCastleMapScreen = Screen('shopCastleMapScreen')
     screenManager.addScreen(shopCastleMapScreen)
     shopCastleMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
     shopCastleMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your castle",50))
     shopCastleMapScreen.addItem(castleMap)
-    shopCastleMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'castleMapUpdate',(castleMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,batMap, tString = 'Back'))
+    shopCastleMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'castleMapUpdate',(castleMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,batMap,roadMap, tString = 'Back'))
+    
+    shopRoadMapScreen = Screen('shopRoadMapScreen')
+    screenManager.addScreen(shopRoadMapScreen)
+    shopRoadMapScreen.addItem(item(0,0,width,200,'titleBarBackground', backgroundColor ="#2C3531"))
+    shopRoadMapScreen.addItem(textBox(0,0,width,200,"titleBar", "Place your Road",50))
+    shopRoadMapScreen.addItem(roadMap)
+    shopRoadMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'roadMapUpdate',(roadMap,),'shopScreen',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,batMap, tString = 'Back'))
     
     battleMapScreen = Screen('battleMapScreen')
     screenManager.addScreen(battleMapScreen)
-    
     battleMapScreen.addItem(batMap)
-    battleMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'battleMapUpdate',(castleMap,),'battleSim',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,map2, tString = 'Back'))
+    battleMapScreen.addItem(mapUpdateButton(30,height-100,100,50,'battleMapUpdate',(castleMap,),'battleSim',screenManager,farmMap,villageMap,barracksMap,wallsMap,towerMap,castleMap,roadMap,map2, tString = 'Back'))
     battle.setDamToDef(30)
     battleMapScreen.addItem(funButton(1200,height/2 - 100,100,50,'Fight!',battle.defDamage,tString='Fight!'))
     
@@ -206,13 +215,14 @@ def setUpGame():
     # shopScreen.addItem(linkButton(10,450,100,100,'linkButton1','shopTowerMapScreen',screenManager, tString = 'Go to TowerMap'))
     # shopScreen.addItem(linkButton(10,450,100,100,'linkButton1','shopTowerMapScreen',screenManager, tString = 'Go to TowerMap'))
     # shopScreen.addItem(linkButton(10,560,100,100,'linkButton1','shopCastleMapScreen',screenManager, tString = 'Go to CastleMap'))
+    shopScreen.addItem(linkButton(10,560,100,100,'linkButton1','shopRoadMapScreen',screenManager, tString = 'Go to RoadMap'))
     
     sideBar = item(width-400,200,400,height,'sideBar')
     sideBar.backgroundColor = "#253031"
     shopScreen.addItem(sideBar)
 
     
-    currentplayerbox = varBox(0,220,width-200,100,'currentplayerTextbox', (game,),game.currentPlayer.name ,'name')
+    currentplayerbox = varBox(0,220,width-200,100,'currentplayerTextbox', (game,),game._currentPlayer.name ,'name')
     currentplayerbox.tSize = 50
     shopScreen.addItem(currentplayerbox)
 
@@ -220,91 +230,91 @@ def setUpGame():
     troopsInput = textInput(width - 275, 250, 60, 60,'attackerInput')
 
     shopScreen.addItem(troopsInput)
-    shopScreen.addItem(varArgFunButton(width - 90, 250, 80, 40, 'addTroopButton',game.currentPlayer.settroops,1,(game,),'settroops',(troopsInput,)))
+    shopScreen.addItem(varArgFunButton(width - 90, 250, 80, 40, 'addTroopButton',game._currentPlayer.settroops,1,(game,),'settroops',(troopsInput,)))
     shopScreen.addItem(textBox(width - 90, 250, 80, 40, 'addTroopButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 250, 80, 40, 'addTroopButtonText', '2', 20))
 
     shopScreen.addItem(textBox(width - 380, 340, 280, 40, 'desertTextbox', 'Villager', 20))
-    shopScreen.addItem(varFunButton(width - 90, 340, 80, 40, 'addVillagerButton',game.currentPlayer.setvillagers,1,(game.currentPlayer,game),'setvillagers'))
+    shopScreen.addItem(varFunButton(width - 90, 340, 80, 40, 'addVillagerButton',game._currentPlayer.setvillagers,1,(game._currentPlayer,game),'setvillagers'))
     shopScreen.addItem(textBox(width - 90, 340, 80, 40, 'addVillagerButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 340, 80, 40, 'addVillagerButtonText', '2', 20))
     
 
     shopScreen.addItem(textBox(width - 380, 490, 280, 40, 'towerTextbox', 'Tower', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 490, 80, 40, 'addTowerButton', game.currentPlayer.settowers,1,(game.currentPlayer,game), 'settowers','shopTowerMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 490, 80, 40, 'addTowerButton', game._currentPlayer.coins,15,(game._currentPlayer,game), 'coins','shopTowerMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 490, 80, 40, 'addTowerButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 490, 80, 40, 'addTowerButtonText', '15', 20))
 
     shopScreen.addItem(textBox(width - 380, 590, 280, 40, 'farmTextbox', 'Farm', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 590, 80, 40, 'addFarmButton',game.currentPlayer.setfarms,1,(game.currentPlayer,game), 'setfarms','shopFarmMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 590, 80, 40, 'addFarmButton',game._currentPlayer.coins,4,(game._currentPlayer,game), 'coins','shopFarmMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 590, 80, 40, 'addFarmButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 590, 80, 40, 'addFarmButtonText', '4', 20))
 
     shopScreen.addItem(textBox(width - 380, 690, 280, 40, 'villageTextbox', 'Village', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 690, 80, 40, 'addVillageButton', game.currentPlayer.setvillages,1,(game.currentPlayer,game), 'setvillages','shopVillageMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 690, 80, 40, 'addVillageButton', game._currentPlayer.coins,5,(game._currentPlayer,game), 'coins','shopVillageMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 690, 80, 40, 'addVillageText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 690, 80, 40, 'addVillageText', '5', 20))
 
     shopScreen.addItem(textBox(width - 380, 790, 280, 40, 'barracksTextbox', 'Barracks', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 790, 80, 40, 'addBarracksButton', game.currentPlayer.setbarracks,1,(game.currentPlayer,game), 'setbarracks','shopBarracksMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 790, 80, 40, 'addBarracksButton', game._currentPlayer.coins,5,(game._currentPlayer,game), 'coins','shopBarracksMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 790, 80, 40, 'addBarracksButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 790, 80, 40, 'addBarracksButtonText', '5', 20))
     
     shopScreen.addItem(textBox(width - 380, 890, 280, 40, 'wallsTextbox', 'Walls', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 890, 80, 40, 'addWallsButton', game.currentPlayer.setwalls,1,(game.currentPlayer,game), 'setwalls','shopWallsMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 890, 80, 40, 'addWallsButton', game._currentPlayer.coins,10,(game._currentPlayer,game), 'coins','shopWallsMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 890, 80, 40, 'addWallsButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 890, 80, 40, 'addWallsButtonText', '10', 20))
     
     shopScreen.addItem(textBox(width - 380, 990, 280, 40, 'castleTextbox', 'Castle', 20))
-    shopScreen.addItem(linkVarFunButton(width - 90, 990, 80, 40, 'addCastleButton', game.currentPlayer.setcastles,1,(game.currentPlayer,game),'setcastles','shopCastleMapScreen',screenManager))
+    shopScreen.addItem(shopMapLinkButton(width - 90, 990, 80, 40, 'addCastleButton', game._currentPlayer.coins,20,(game._currentPlayer,game),'coins','shopCastleMapScreen',screenManager))
     shopScreen.addItem(textBox(width - 90, 990, 80, 40, 'addCastleButtonText', 'buy', 20))
     shopScreen.addItem(textBox(width - 170, 990, 80, 40, 'addCastleButtonText', '20', 20))
 
 
     shopScreen.addItem(textBox(1000,330,200,40,'currentPlayerCoinsText', 'Coins:',30))
-    shopScreen.addItem(shopVarBox(1000,380,200,40,'currentPlayerCoins',game, [game,],game.currentPlayer.coins,'coins',tSize = 30))
+    shopScreen.addItem(shopVarBox(1000,380,200,40,'currentPlayerCoins',game, [game,],game._currentPlayer.coins,'coins',tSize = 30))
     
     shopScreen.addItem(textBox(90,330,200,40,'currentPlayerSwampText', 'Swamps:',30))
-    shopScreen.addItem(shopVarBox(300,330,100,30,'varText1',game,[game,],game.currentPlayer.swamp,'swamp',tSize = 30))
+    shopScreen.addItem(shopVarBox(300,330,100,30,'varText1',game,[game,],game._currentPlayer.swamp,'swamp',tSize = 30))
 
     shopScreen.addItem(textBox(90,370,200,40,'currentPlayerDesertText', 'Deserts:',30))
-    shopScreen.addItem(shopVarBox(300,370,100,40,'varText1',game,[game,],game.currentPlayer.desert, 'desert', tSize = 30))
+    shopScreen.addItem(shopVarBox(300,370,100,40,'varText1',game,[game,],game._currentPlayer.desert, 'desert', tSize = 30))
 
     shopScreen.addItem(textBox(90,410,200,40,'currentPlayerMountainText', 'Mountains:',30))
-    shopScreen.addItem(shopVarBox(300,410,100,40,'varText1',game,[game,],game.currentPlayer.mountain, 'mountain', tSize = 30))
+    shopScreen.addItem(shopVarBox(300,410,100,40,'varText1',game,[game,],game._currentPlayer.mountain, 'mountain', tSize = 30))
 
     shopScreen.addItem(textBox(90,450,200,40,'currentPlayerForestText', 'Forests:',30))
-    shopScreen.addItem(shopVarBox(300,450,100,40,'varText1',game,[game,],game.currentPlayer.forest, 'forest', tSize = 30))
+    shopScreen.addItem(shopVarBox(300,450,100,40,'varText1',game,[game,],game._currentPlayer.forest, 'forest', tSize = 30))
 
     shopScreen.addItem(textBox(90,490,200,40,'currentPlayerHighlandText', 'Highlands:',30))
-    shopScreen.addItem(shopVarBox(300,490,100,40,'varText1',game,[game,],game.currentPlayer.highland, 'highland', tSize = 30))
+    shopScreen.addItem(shopVarBox(300,490,100,40,'varText1',game,[game,],game._currentPlayer.highland, 'highland', tSize = 30))
 
     shopScreen.addItem(textBox(610,330,200,40,'currentPlayerPalacesText', 'Palaces:',30))
-    shopScreen.addItem(shopVarBox(830,330,100,40,'varText1',game,[game,],game.currentPlayer.palaces, 'palaces', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,330,100,40,'varText1',game,[game,],game._currentPlayer.palaces, 'palaces', tSize = 30))
 
     shopScreen.addItem(textBox(610,370,200,40,'currentPlayerVillagesText', 'Villages:',30))
-    shopScreen.addItem(shopVarBox(830,370,100,40,'varText1',game,[game,],game.currentPlayer.villages, 'villages', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,370,100,40,'varText1',game,[game,],game._currentPlayer.villages, 'villages', tSize = 30))
 
     shopScreen.addItem(textBox(610,410,200,40,'currentPlayerFarmsText', 'Farms:',30))
-    shopScreen.addItem(shopVarBox(830,410,100,40,'varText1',game,[game,],game.currentPlayer.farms, 'farms', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,410,100,40,'varText1',game,[game,],game._currentPlayer.farms, 'farms', tSize = 30))
 
     shopScreen.addItem(textBox(610,450,200,40,'currentPlayerCastlesText', 'Castles:',30))
-    shopScreen.addItem(shopVarBox(830,450,100,40,'varText1',game,[game,],game.currentPlayer.castles, 'castles', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,450,100,40,'varText1',game,[game,],game._currentPlayer.castles, 'castles', tSize = 30))
 
     shopScreen.addItem(textBox(610,490,200,40,'currentPlayerBarracksText', 'Barracks:',30))
-    shopScreen.addItem(shopVarBox(830,490,100,40,'varText1',game,[game,],game.currentPlayer.barracks, 'barracks', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,490,100,40,'varText1',game,[game,],game._currentPlayer.barracks, 'barracks', tSize = 30))
 
     shopScreen.addItem(textBox(610,530,200,40,'currentPlayerWallsText', 'Walls:',30))
-    shopScreen.addItem(shopVarBox(830,530,100,40,'varText1',game,[game,],game.currentPlayer.walls, 'walls', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,530,100,40,'varText1',game,[game,],game._currentPlayer.walls, 'walls', tSize = 30))
 
     shopScreen.addItem(textBox(610,570,200,40,'currentPlayerTowersText', 'Towers:',30))
-    shopScreen.addItem(shopVarBox(830,570,100,40,'varText1',game,[game,],game.currentPlayer.towers, 'towers', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,570,100,40,'varText1',game,[game,],game._currentPlayer.towers, 'towers', tSize = 30))
     
     shopScreen.addItem(textBox(610,650,200,40,'currentPlayerTowersText', 'Troops:',30))
-    shopScreen.addItem(shopVarBox(830,650,100,40,'varText1',game,[game,],game.currentPlayer.towers, 'troops', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,650,100,40,'varText1',game,[game,],game._currentPlayer.towers, 'troops', tSize = 30))
     
     shopScreen.addItem(textBox(610,730,200,40,'currentPlayerTowersText', 'Villagers:',30))
-    shopScreen.addItem(shopVarBox(830,730,100,40,'varText1',game,[game,],game.currentPlayer.villagers, 'villagers', tSize = 30))
+    shopScreen.addItem(shopVarBox(830,730,100,40,'varText1',game,[game,],game._currentPlayer.villagers, 'villagers', tSize = 30))
 
     shopScreen.addItem(funButton(width - 630, height - 100, 200,50,'nextPlayerButton',game.nextPlayer, tString = 'next player',tColor = color(255), backgroundColor = color(51)))
     shopScreen.addItem(linkButton(30, height - 100, 200,50,'mapButton','mapScreen',screenManager, tString = 'Go to Map',tColor = color(255), backgroundColor = color(51)))
@@ -315,7 +325,7 @@ def setUpGame():
     battleSimScreen.addItem(linkButton(30,height-100,100,50,'linkButton2','mapScreen',screenManager, tString = 'Back'))
     battleSimScreen.addItem(textBox(0,0,width,200,'title', 'BATTLE SIMULATOR', 50))
     battleSimScreen.addItem(textBox(150,300,100,100,'attacker', 'Attacker', 20))
-    battleSimScreen.addItem(varBox(150,375,500,50,'currentplayerTextbox', (game,),game.currentPlayer.name ,'name',tSize = 40, tColor = color(0)))
+    battleSimScreen.addItem(varBox(150,375,500,50,'currentplayerTextbox', (game,),game._currentPlayer.name ,'name',tSize = 40, tColor = color(0)))
     battleSimScreen.addItem(textBox(1670,300,100,100,'troops1', 'Troops', 20))
     attTroops = funDropDown(1270,375,500,30,'attTroopDropDown','1',battle.setTroopsAttacker,1,2,3,4,5)
     battleSimScreen.addItem(attTroops)
