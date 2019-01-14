@@ -26,6 +26,7 @@ class Tile(item):
         
     def display(self):
         #Draw hexagon
+        stroke(30)
         fill(self.colour)
         h = createShape()
         h.beginShape()

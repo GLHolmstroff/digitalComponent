@@ -1,4 +1,5 @@
 from screenManagement import *
+from gameManagement import *
 
 class item(object):
     def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
@@ -225,7 +226,7 @@ class shopMapLinkButton(linkButton):
 
 class linkFunButton(linkButton):
     def __init__(self,x,y,w,h,name,fun,dest,manager,arg=None,**kwargs):
-        super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager)
+        super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
         self.fun = fun
         self.arg = arg
         
@@ -442,8 +443,8 @@ class shopVarBox(varBox):
             x.bindTo(self.update)
             
 class resultVarBox(varBox):
-    def __init__(self,x,y,w,h,name,parents,attacker = True,var = '',attrname = '',tColor = '#ffffff', tSzie = 20):
-        super(resultVarBox, self).__init__(x,y,w,h,name,parents,var,attrname)
+    def __init__(self,x,y,w,h,name,parents,attacker = True,var = '',attrname = '',tColor = '#ffffff', tSize = 60):
+        super(resultVarBox, self).__init__(x,y,w,h,name,parents,var,attrname,tSize=40)
         self.attacker = attacker
         self.tString = ''
         
@@ -456,7 +457,7 @@ class resultVarBox(varBox):
         else:
             defLost = getattr(value, 'defLost')
             player = getattr(value, 'defender')
-            if player is not None:
+            if isinstance(player,Player):
                 self.tString = player.name + ' lost ' + str(defLost['troops']) + ' troops'
                 if defLost['wall']:
                     self.tString += ', and a wall'
