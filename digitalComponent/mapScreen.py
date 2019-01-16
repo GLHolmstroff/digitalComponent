@@ -158,7 +158,7 @@ class setupTile(clickableTile):
             self.mil = False
     
 class shopTile(clickableTile):
-    imgDict = {Palace:'palace.png', Farm:'farm.png', Barracks:'barrack.png', Village:'village.png', Walls:'wall.png', Tower:'toren.png', Castle:'Castle.png'}
+    imgDict = {Palace:'palace.png', Farm:'farm.png', Barracks:'barrack.png', Village:'village.png', Walls:'wall.png', Tower:'toren.png', Castle:'castle.png'}
     buildingDict = {Palace:'setpalaces', Farm:'setfarms', Barracks:'setbarracks', Village:'setvillages', Walls:'setwalls', Tower:'settowers', Castle:'setcastles'}
     colorDict = {'#DAA33A':'setdesert','#8CA74D':'setforest','#C02823':'sethighland','#F0E5B4':'setmountain','#3D342D':'setswamp'}
     

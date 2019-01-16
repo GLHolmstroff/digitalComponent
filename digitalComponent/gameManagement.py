@@ -78,10 +78,12 @@ class Game:
     def winCheck(self):
         if self.setting['threeCastles']:
             for player in self.players:
+                print(player.castles)
                 if player.castles >= 3:
                     self.winner = player
                     for callback in self._winnerObservers:
                         callback(self.winner)
+                    print('reached')
                     self.manager.currentScreen = self.manager.screens.get('winScreen2')
                     break;
     

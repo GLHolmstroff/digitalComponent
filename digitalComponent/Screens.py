@@ -330,8 +330,8 @@ def setUpGame():
     battleStartScreen.addItem(textBox(0,0,width,200,'title', 'BATTLE', 50))
     battleStartScreen.addItem(textBox(0,300,width,280,'explanation','Do you want to fight against someone?'))
     battleStartScreen.addItem(linkButton(width/2 - 150,height/2-50,300,50,'linkButton2','battleSim',screenManager, tString = 'Yes, lets fight!'))
-    battleStartScreen.addItem(funButton(width/2 - 150, height/2 + 50,300,50,'nextPlayerButton',game.nextPlayer, tColor = color(255), backgroundColor = color(51)))
     battleStartScreen.addItem(linkButton(width/2 - 150,height/2 + 50,300,50,'linkButton2','shopScreen',screenManager, tString = 'No, end turn'))
+    battleStartScreen.addItem(funButton(width/2 - 150, height/2 + 50,300,50,'nextPlayerButton',game.nextPlayer, tColor = color(255), backgroundColor = color(51)))
     battleStartScreen.addItem(linkButton(30,height-100,100,50,'linkButton2','shopScreen',screenManager, tString = 'Back'))
     
     
