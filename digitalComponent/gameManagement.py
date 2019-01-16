@@ -110,7 +110,7 @@ class Player():
         self.active = False
         self.name = name
         self.colour = colour
-        self.coins = 0
+        self.coins = 500
         self.farms = 0
         self.castles = 0
         self.barracks = 0
@@ -124,7 +124,7 @@ class Player():
         self.swamp = 0
         self.highland = 0
         self.villagers = 2
-        self.troops = 0
+        self.troops = 10
         # self.vals = dict(coins = 0, farms=0,castles = 0, walls = 0, palaces = 0, villages = 0, towers = 0,barracks = 0, mountain = 0, highland = 0, forest = 0, desert = 0, swamp = 0)
         self._valsObservers = []
 
