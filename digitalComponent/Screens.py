@@ -25,7 +25,7 @@ def setUpGame():
     shopFarm = Farm(0,0,0,0,'farm',game._currentPlayer)
     shopVillage = Village(0,0,0,0,'village',game._currentPlayer)
     shopBarracks = Barracks(0,0,0,0,'barracks',game._currentPlayer)
-    shopWalls = Walls(0,0,0,0,'walls',game._currentPlayer)
+    shopWalls = Walls(0,0,0,0,'wall',game._currentPlayer)
     shopTower = Tower(0,0,0,0,'tower',game._currentPlayer)
     shopCastle = Castle(0,0,0,0,'castle',game._currentPlayer)
     shopRoad = Road(0,0,0,0,'road')
