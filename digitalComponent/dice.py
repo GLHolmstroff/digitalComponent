@@ -120,22 +120,23 @@ class setupDiceGroup(diceGroup):
     def __init__(self,x,y,w,h,name,game,*dice):
          super(setupDiceGroup,self).__init__(x,y,w,h,name,*dice)
          self.results = []
-         self.amountActive = 0
+         self.amountActive = 2
          self.winningDice = 0
          self.game = game
-    
+         self.changeAmount(2)
+         
     def onClick(self):
         self.winningDice = 0
         self.results = []
         for d in self.dice:
-            if d.active:
-                d.onClick()
-                self.results.append(d.val)
+                if d.active:
+                    d.onClick()
+                    self.results.append(d.val)
         try:    
             self.winningDice = self.results.index(max(self.results))
         except:
             self.winningDice = 0
-        self.game.currentPlayer = self.game.setPlayer(self.game.players[self.winningDice])
+        self.game._currentPlayer = self.game.setPlayer(self.game.players[self.winningDice])
         self.game.currentPlayerIndex = self.winningDice
     
     def changeAmount(self, amount):

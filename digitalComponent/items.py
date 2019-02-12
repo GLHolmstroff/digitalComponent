@@ -1,4 +1,5 @@
 from screenManagement import *
+from gameManagement import *
 
 class item(object):
     def __init__(self, x,y,w,h,name,backgroundColor = color(80), **kwargs):
@@ -23,8 +24,8 @@ class img(item):
         image(self.img,self.x,self.y,self.w,self.h)
         
 class textBox(item):
-    def __init__(self,x,y,w,h,name, tString, tSize = 24, tColor = '000000'):
-        super(textBox, self).__init__(x,y,w,h,name)    
+    def __init__(self,x,y,w,h,name, tString, tSize = 24, tColor = '#FFCB9A', **kwargs):
+        super(textBox, self).__init__(x,y,w,h,name,**kwargs)    
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
@@ -89,12 +90,15 @@ class textInput(clickable):
         
 
 class button(clickable):
-    def __init__(self,x,y,w,h,name,tString='', tSize = 20, tColor = '000', **kwargs):
+    def __init__(self,x,y,w,h,name,tString='', tSize = 25, tColor = '000', **kwargs):
+        super(button, self).__init__(x,y,w,h,name, **kwargs)
         self.tString = tString
         self.tSize = tSize
         self.tColor = tColor
         self.hover = False
-        super(button, self).__init__(x,y,w,h,name, **kwargs)
+        self.backgroundColor = "#FFCB9A"
+        self.barSize = w * 0.2
+        
     
     def onClick(self, *args):
         pass
@@ -103,16 +107,23 @@ class button(clickable):
         self.hover = True
     
     def display(self):
-        if self.hover:
-            fill(color(200))
-            self.hover = False
-        else:
-            fill(self.backgroundColor)
-        rect(self.x,self.y,self.w,self.h,10,10,10,10)
-        fill(self.tColor)
+        if self.hover == True and self.barSize < self.w * 0.8:
+            self.barSize += 10
+            self.tSize = 30
+        elif self.hover == False and self.barSize > self.w * 0.2:
+            self.barSize -= 10
+            self.tSize = 25
+        
+        fill(self.backgroundColor)
+        rectMode(CENTER)
+        noStroke()
+        rect(self.x + self.w/2, self.y + self.h,self.barSize,4,2,2,2,2)
+        rectMode(CORNER)
         textSize(self.tSize)
         text(self.tString,self.x,self.y,self.w,self.h)
-    
+        
+        self.hover = False
+        
     
 class linkButton(button):
     
@@ -159,9 +170,63 @@ class funButton(button):
         else:
             self.fun()
             
+class palaceButton(funButton):
+    def __init__(self,x,y,w,h,name,manager,fun,arg = None,**kwargs):
+         super(palaceFunButton, self).__init__(x,y,w,h,name,fun,arg = arg, **kwargs)
+         self.manager = manager
+         self.enabled = True
+         self.activePlayers = self.manager.amountActive + 1
+
+    def display(self):
+        if self.hover == True and self.barSize < self.w * 0.8:
+            self.barSize += 10
+            self.tSize = 30
+        elif self.hover == False and self.barSize > self.w * 0.2:
+            self.barSize -= 10
+            self.tSize = 25
+        
+        fill(self.backgroundColor)
+        rectMode(CENTER)
+        noStroke()
+        rect(self.x + self.w/2, self.y + self.h,self.barSize,4,2,2,2,2)
+        rectMode(CORNER)
+        textSize(self.tSize)
+        text(self.tString,self.x,self.y,self.w,self.h)
+        self.hover = False
+        self.checkEnabled()
+        
+    def onClick(self):
+        if self.enabled:
+            if self.arg is not None:
+                self.fun(self.arg)
+            else:
+                self.fun()
+            
+    def checkEnabled(self):
+        pass
+
+class shopMapLinkButton(linkButton):
+    def __init__(self,x,y,w,h,name,cond,val,parents,attrname,dest,manager,**kwargs):
+        super(shopMapLinkButton, self).__init__(x,y,w,h,name,dest,manager)
+        self.cond = cond
+        self.val = val
+        self.parents = parents
+        self.attrname = attrname
+        for x in self.parents:
+            x.bindTo(self.update)
+            
+    def update(self,value):
+        self.cond = getattr(value, self.attrname)
+        # print(self.cond)
+        
+    def onClick(self):
+        if self.cond >= self.val:
+            self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+            
+
 class linkFunButton(linkButton):
     def __init__(self,x,y,w,h,name,fun,dest,manager,arg=None,**kwargs):
-        super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager)
+        super(linkFunButton, self).__init__(x,y,w,h,name,dest,manager,**kwargs)
         self.fun = fun
         self.arg = arg
         
@@ -256,7 +321,7 @@ class dropDown(clickable):
     def display(self):
         fill(200)
         rect(self.x,self.y,self.w,self.baseh,10,10,10,10)
-        fill(0)
+        fill("#253031")
         triangle(self.x + 0.85 * self.w, self.y + 0.1 * self.h, self.x + 0.95 * self.w, self.y + 0.1 * self.h, self.x + 0.9* self.w, self.y + 0.8 * self.h )
         text(self.title,self.x,self.y,self.w,self.h)
         if self.active:
@@ -269,8 +334,9 @@ class dropDown(clickable):
                 if self.hover == option:
                     fill(200)
                     self.hover = False
-                rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh,10,10,10,10)
-                fill(0)
+                fill("#253031")
+                rect(self.x ,self.y + (option+1) * self.baseh,self.w,self.baseh)
+                fill("#FFCB9A")
                 text(str(self.options[option]),self.x,self.y + (option+1) * self.baseh,self.w,self.baseh)
                 fill(255)
             
@@ -349,7 +415,7 @@ class variableText(textBox):
 
         
 class varBox(textBox):
-    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = '#ffffff', tSize = 20):
+    def __init__(self,x,y,w,h,name,parents,var,attrname,tColor = '#FFCB9A', tSize = 20):
         super(varBox,self).__init__(x,y,w,h,name,'')
         self.tColor = tColor
         self.tSize = tSize
@@ -364,9 +430,10 @@ class varBox(textBox):
         self.tString = str(getattr(value, self.attrname))
         
 class shopVarBox(varBox):
-    def __init__(self,x,y,w,h,name,mparent,parents,var,attrname,tColor = '#ffffff', tSize = 20):
+    def __init__(self,x,y,w,h,name,mparent,parents,var,attrname, tSize = 20):
         super(shopVarBox,self).__init__(x,y,w,h,name,parents,var,attrname)
         self.mparent = mparent
+        self.tSize = tSize
         self.mparent.bindToAll(self.updateParents)
         
     def updateParents(self,value):
@@ -376,8 +443,8 @@ class shopVarBox(varBox):
             x.bindTo(self.update)
             
 class resultVarBox(varBox):
-    def __init__(self,x,y,w,h,name,parents,attacker = True,var = '',attrname = '',tColor = '#ffffff', tSzie = 20):
-        super(resultVarBox, self).__init__(x,y,w,h,name,parents,var,attrname)
+    def __init__(self,x,y,w,h,name,parents,attacker = True,var = '',attrname = '',tColor = '#ffffff', tSize = 60):
+        super(resultVarBox, self).__init__(x,y,w,h,name,parents,var,attrname,tSize=40)
         self.attacker = attacker
         self.tString = ''
         
@@ -390,7 +457,7 @@ class resultVarBox(varBox):
         else:
             defLost = getattr(value, 'defLost')
             player = getattr(value, 'defender')
-            if player is not None:
+            if isinstance(player,Player):
                 self.tString = player.name + ' lost ' + str(defLost['troops']) + ' troops'
                 if defLost['wall']:
                     self.tString += ', and a wall'
@@ -531,6 +598,10 @@ class Tower(Building):
 class Castle(Building):
     def __init__(self,x,y,w,h,name,owner,**kwargs):
         super(Castle, self).__init__(x,y,w,h,name,owner,20,True,20,**kwargs)
+        
+class Road(Building):
+    def __init__(self,x,y,w,h,name,**kwargs):
+        super(Road, self).__init__(x,y,w,h,name,None,1,False,0,**kwargs)
 
         
 

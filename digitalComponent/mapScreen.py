@@ -9,7 +9,7 @@ pickedBuilding = None
 
 
 class Tile(item):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,currentBuildings=0, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,currentBuildings=0,img1=None,img2=None, **kwargs):
         super(Tile, self).__init__(x,y,w,h,name, **kwargs)
         self.gold = gold        
         self.colour = colour
@@ -21,9 +21,12 @@ class Tile(item):
         self._building1 = building1
         self._building2 = building2
         self.currentBuildings = currentBuildings
+        self.img1 = img1
+        self.img2 = img2
         
     def display(self):
         #Draw hexagon
+        stroke(30)
         fill(self.colour)
         h = createShape()
         h.beginShape()
@@ -52,6 +55,8 @@ class Tile(item):
                     # Insert code to load image here
                     stroke(self._building1.owner.colour)
                     rect(self.x + 0.34*self.w,self.y + 0.54*self.h,0.22*self.w,0.22*self.h)
+                    if self.img1 is not None:
+                        image(self.img1, self.x + 0.34*self.w,self.y + 0.54*self.h,0.22*self.w,0.22*self.h)
                     stroke(30)
                 else:
                     rect(self.x + 0.35*self.w,self.y + 0.55*self.h,0.2*self.w,0.2*self.h)
@@ -60,6 +65,8 @@ class Tile(item):
                     #insert code to load image here
                     stroke(self._building2.owner.colour)
                     rect(self.x + 0.34*self.w,self.y + 0.19*self.h,0.22*self.w,0.22*self.h)
+                    if self.img2 is not None:
+                        image(self.img2, self.x + 0.34*self.w,self.y + 0.19*self.h,0.22*self.w,0.22*self.h)
                     stroke(30)
                 else:
                     rect(self.x + 0.35*self.w,self.y + 0.2*self.h,0.2*self.w,0.2*self.h)
@@ -83,7 +90,7 @@ class Tile(item):
             
 
 class clickableTile(Tile, clickable):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,img1=None,img2=None, **kwargs):
         super(clickableTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2, **kwargs)
         
     def onClick(self):
@@ -94,13 +101,13 @@ class clickableTile(Tile, clickable):
     
     #Conversion methods for internal updating of maps
     def toTile(self):
-        return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,self.currentBuildings))
+        return(Tile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,self.currentBuildings,self.img1,self.img2))
     
     def toShopTile(self,targetBuilding,dest,manager):
-        return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager,self.currentBuildings))
+        return(shopTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,targetBuilding,dest,manager,self.currentBuildings,self.img1,self.img2))
     
     def toBattleTile(self,battle):
-        return(battleTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,battle,self.currentBuildings))
+        return(battleTile(self.x,self.y,self.w,self.h,self.name,self.gold,self.colour,self.building,self.road,self.civ,self.mil,self._hasRoad,self._building1,self._building2,battle,self.currentBuildings,self.img1,self.img2))
     
 class setupTile(clickableTile):
     def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None, **kwargs):
@@ -151,45 +158,69 @@ class setupTile(clickableTile):
             self.mil = False
     
 class shopTile(clickableTile):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,targetBuilding=None,dest=None,manager=None,cB=0, **kwargs):
+    imgDict = {Palace:'palace.png', Farm:'farm.png', Barracks:'barrack.png', Village:'village.png', Walls:'wall.png', Tower:'toren.png', Castle:'castle.png'}
+    buildingDict = {Palace:'setpalaces', Farm:'setfarms', Barracks:'setbarracks', Village:'setvillages', Walls:'setwalls', Tower:'settowers', Castle:'setcastles'}
+    colorDict = {'#DAA33A':'setdesert','#8CA74D':'setforest','#C02823':'sethighland','#F0E5B4':'setmountain','#3D342D':'setswamp'}
+    
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,targetBuilding=None,dest=None,manager=None,cB=0,img1=None,img2=None, **kwargs):
         super(shopTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
+        #TargetBuilding is a template building in Screens, the owner is always currentplayer. To place a building into a tile, we copy targetBuilding
         self.targetBuilding = targetBuilding
         self.dest = dest
         self.manager = manager
         self.currentBuildings=cB
+        self.img1 = img1
+        self.img2 = img2
         
     def onClick(self):
+        #Check if targetbuilding exists
         if self.targetBuilding is not None:
-            if (self.targetBuilding.mil and self.mil) or (self.targetBuilding.civ and self.civ):
-                if self.currentBuildings < self.building:
-                    if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name and self.targetBuilding.name != self._building1.name:
+            #Check if targetbuilding can be afforded
+            if self.targetBuilding.cost <= self.targetBuilding.owner.coins:
+                #Build a road
+                if isinstance(self.targetBuilding, Road):
+                    self.addRoad()
+                #Check if building matches tile restrictions
+                elif (self.targetBuilding.mil and self.mil) or (self.targetBuilding.civ and self.civ):
+                    #Check if there is space for the building
+                    if self.currentBuildings < self.building:
+                        #If there is a building on the tile already, and it has the same owner as targetbuilding, build second building
+                        if self.currentBuildings == 1 and self.targetBuilding.owner.name == self._building1.owner.name and self.targetBuilding.name != self._building1.name:
+                            #Copy targetbuilding and place in tile
                             self._building2 = self.targetBuilding.copy()
+                            #Load corresponding image
+                            if type(self.targetBuilding) in shopTile.imgDict:
+                                self.img2 = loadImage(shopTile.imgDict[type(self.targetBuilding)])
+                            #Increase building count of chosen type in owner by one
+                            if type(self.targetBuilding) in shopTile.buildingDict:
+                                getattr(self.targetBuilding.owner,shopTile.buildingDict[type(self.targetBuilding)])(1)
                             self.currentBuildings +=1
-                    elif self._building1 is None:
-                        self._building1 = self.targetBuilding.copy()
-                        self.currentBuildings +=1
-                        #Determine which tileatrribute to increase in owner, only when building first building on tile
-                        out = ''
-                        if self.colour == '#DAA33A':
-                            out = 'setdesert'
-                        elif self.colour == '#8CA74D':
-                            out = 'setforest'
-                        elif self.colour == '#C02823':
-                            out = 'sethighland'
-                        elif self.colour == '#F0E5B4':
-                            out = 'setmountain'
-                        elif self.colour == '#3D342D':
-                            out = 'setswamp'
-                        #call appropriate setter of the new building owner to increase by one            
-                        getattr(self.targetBuilding.owner,out)(1)
-                    # self.manager.currentScreen = self.manager.screens.get(self.dest, self.manager.currentScreen)
+                        #If building 1 is empty, build first building
+                        elif self._building1 is None:
+                            #Copy targetBuilding and place in tile
+                            self._building1 = self.targetBuilding.copy()
+                            #Load corresponding image
+                            if type(self.targetBuilding) in shopTile.imgDict:
+                                self.img1 = loadImage(shopTile.imgDict[type(self.targetBuilding)])
+                            #Increase building count of chosen type in owner by one
+                            if type(self.targetBuilding) in shopTile.buildingDict:
+                                    getattr(self.targetBuilding.owner,shopTile.buildingDict[type(self.targetBuilding)])(1)
+                            self.currentBuildings +=1
+                            #increase count of chosen type of tile in owner by one
+                            out = ''
+                            if self.colour in shopTile.colorDict:
+                                out = shopTile.colorDict[self.colour]
+                            #call appropriate setter of the new building owner to increase by one            
+                            getattr(self.targetBuilding.owner,out)(1)
                     
         
 class battleTile(clickableTile):
-    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,battle=None,cB=0, **kwargs):
+    def __init__(self,x,y,w,h,name, gold=0, colour=0, building=0, road=False, civ=False, mil=False,hasRoad=False,building1=None,building2=None,battle=None,cB=0,img1=None,img2=None, **kwargs):
         super(battleTile, self).__init__(x,y,w,h,name,gold,colour,building,road,civ,mil,hasRoad,building1,building2,**kwargs)
         self.battle = battle
         self.currentBuildings=cB
+        self.img1 = img1
+        self.img2 = img2
             
     def onClick(self):
         self.battle.setLocation(self)
@@ -351,6 +382,7 @@ class gameMap(item):
         if isinstance(tile,Tile):
             self.tiles[x-1][y-1] = tile
         self.displayPrep()
+        
                 
 class clickableMap(gameMap,clickable):
     def __init__(self,x,y,w,h,name,rows, **kwargs):
@@ -409,6 +441,57 @@ class clickableMap(gameMap,clickable):
             for y in range(len(self.tiles[x])):
                 out[x][y] = self.tiles[x][y].toBattleTile(battle)
         return out
+    
+    def toDefaultMap(self,players):
+        self.rows = 5
+        self.columns = 5
+        self.tiles = list()
+        for _ in range(5):
+            self.tiles.append(list())
+        self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[0].append(clickableSwamp(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        wall1 = Walls(0,0,0,0,'palace',players[0])
+        self.tiles[0][1]._building1 = wall1.copy()
+        self.tiles[0][1].img1 = loadImage('wall.png')
+        farm1 = Farm(0,0,0,0,'palace',players[0])
+        self.tiles[0][1]._building2 = farm1.copy()
+        self.tiles[0][1].img2 = loadImage('farm.png')
+        self.tiles[0][1].currentBuildings = 2
+        players[0].setswamp(1)
+        self.tiles[0].append(clickableSwamp(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[0].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[1].append(clickableHighland(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        palace1 = Palace(0,0,0,0,'palace',players[0])
+        self.tiles[1][0]._building1 = palace1.copy()
+        self.tiles[1][0].img1 = loadImage('palace.png')
+        self.tiles[1][0].currentBuildings = 1
+        players[0].sethighland(1)
+        self.tiles[1].append(clickableForest(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[1].append(clickableMountain(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[1].append(clickableDesert(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[1].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[2].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[2].append(clickableDesert(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[2].append(clickableMountain(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[2].append(clickableForest(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[2].append(clickableHighland(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        palace2 = Palace(0,0,0,0,'palace',players[1])
+        self.tiles[2][4]._building1 = palace2.copy()
+        self.tiles[2][4].img1 = loadImage('palace.png')
+        self.tiles[2][4].currentBuildings = 1
+        players[1].sethighland(1)
+        self.tiles[3].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[3].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[3].append(clickableSwamp(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[3].append(clickableSwamp(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        self.tiles[3].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+        for _ in range(5):
+            self.tiles[4].append(clickableWater(self.x,self.y,self.w/(self.columns),self.h/(self.rows),''))
+            
+        self.displayPrep()
+        for callback in self._observers:
+            callback(self)
     
     def bindTo(self,callback):
         self._observers.append(callback)
@@ -508,6 +591,7 @@ class shopMap(clickableMap):
         
     def __str__(self):
         return(self.name)
+
     
 class battleMap(clickableMap):
     def __init__(self,x,y,w,h,name,mapParents,battle,**kwargs):
@@ -530,7 +614,7 @@ class battleMap(clickableMap):
         self.displayPrep()
         
         
-class colourPicker(button):
+class colourPicker(clickable):
     def __init__(self,x,y,w,h,name,colour, **kwargs):
         self.x = x
         self.y = y
